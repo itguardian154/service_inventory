@@ -17,108 +17,84 @@ class Class_Stock extends Controller
     public function show($request)
     {
         // set value variable
-        $idDepartemen = ''; $departemen=''; $idDepartemenSub=''; $departemenSub=''; $name=''; 
-        $pos=''; $grade=''; $idEmployee=''; $nik=''; $phone=''; $dateOfBirth=''; $age=''; $dateOfJoin=''; $yearsOfService='';
-        $address=''; $city=''; $province=''; $email=''; $status='';
+        $idItems=''; $itemGroups=''; $brand=''; $code=''; $items=''; $description=''; $unit=''; $initial_stock=''; $haveExp='';
+        $stockIn=''; $stockOut=''; $finalStock=''; $lastPrice=''; $averagePrice=''; $totalPrice='';
         
-        if (isset($request['id_departemen']) && $request['id_departemen']!='' ) {$idDepartemen = $request['id_departemen'];}
-        if (isset($request['departemen']) && $request['departemen']!='' ) {$departemen = $request['departemen'];}
-        if (isset($request['id_departemen_sub']) && $request['id_departemen_sub']!='' ) {$idDepartemenSub = $request['id_departemen_sub'];}
-        if (isset($request['departemen_sub']) && $request['departemen_sub']!='' ) {$departemenSub = $request['departemen_sub'];}
-        if (isset($request['name']) && $request['name']!='' ) {$name = $request['name'];}
-        if (isset($request['pos']) && $request['pos']!='' ) {$pos= $request['pos'];}
-        if (isset($request['grade']) && $request['grade']!='' ) {$grade = $request['grade'];}
-        if (isset($request['id_employee']) && $request['id_employee']!='' ) {$idEmployee = $request['id_employee'];}
-        if (isset($request['nik']) && $request['nik']!='' ) {$nik = $request['nik'];}
-        if (isset($request['phone']) && $request['phone']!='' ) {$phone = $request['phone'];}
-        if (isset($request['date_of_birth']) && $request['date_of_birth']!='' ) {$dateOfBirth = $request['date_of_birth'];}
-        if (isset($request['age']) && $request['age']!='' ) {$age = $request['age'];}
-        if (isset($request['date_of_join']) && $request['date_of_join']!='' ) {$dateOfJoin = $request['date_of_join'];}
-        if (isset($request['years_of_service']) && $request['years_of_service']!='' ) {$yearsOfService = $request['years_of_service'];}
-        if (isset($request['address']) && $request['address']!='' ) {$address = $request['address'];}
-        if (isset($request['city']) && $request['city']!='' ) {$city = $request['city'];}
-        if (isset($request['province']) && $request['province']!='' ) {$province = $request['province'];}
-        if (isset($request['email']) && $request['email']!='' ) {$email = $request['email'];}
-        if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}
+        if (isset($request['id_item']) && $request['id_item']!='' ) {$idItems = $request['id_item'];}
+        if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroups = $request['item_group'];}
+        if (isset($request['brand']) && $request['brand']!='' ) {$brand = $request['brand'];}
+        if (isset($request['code']) && $request['code']!='' ) {$code = $request['code'];}
+        if (isset($request['items']) && $request['items']!='' ) {$items = $request['items'];}
+        if (isset($request['description']) && $request['description']!='' ) {$description = $request['description'];}
+        if (isset($request['unit']) && $request['unit']!='' ) {$unit = $request['unit'];}
+        if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$idItems = $request['initial_stock'];}
+        if (isset($request['have_exp']) && $request['have_exp']!='' ) {$haveExp = $request['have_exp'];}
+        if (isset($request['stock_in']) && $request['stock_in']!='' ) {$stockIn = $request['stock_in'];}
+        if (isset($request['stock_out']) && $request['stock_out']!='' ) {$stockOut = $request['stock_out'];}
+        if (isset($request['final_stock']) && $request['final_stock']!='' ) {$finalStock = $request['final_stock'];}
+        if (isset($request['last_price']) && $request['last_price']!='' ) {$lastPrice = $request['last_price'];}
+        if (isset($request['average_price']) && $request['average_price']!='' ) {$averagePrice = $request['average_price'];}
+        if (isset($request['total_price']) && $request['total_price']!='' ) {$totalPrice = $request['total_price'];}
+
 
         try
         {
-            $data_ = DB::table('employee');
-            if($idDepartemen!='')
+            $data_ = DB::table('stock');
+            if($idItems!='')
             {
-                $data_->where('id_departemen',$idDepartemen);
+                $data_->where('id_item',$idItems);
             }
-            if($departemen!='')
+            if($itemGroups!='')
             {
-                $data_->where('departemen',$departemen);
+                $data_->where('item_group',$itemGroups);
             }
-            if($idDepartemenSub!='')
+            if($code!='')
             {
-                $data_->where('id_departemen_sub',$idDepartemenSub);
+                $data_->where('code',$code);
             }
-            if($departemenSub!='')
+            if($items!='')
             {
-                $data_->where('departemen_sub',$departemenSub);
+                $data_->where('items',$items);
             }
-            if($name!='')
+            if($description!='')
             {
-                $data_->where('name',$name);
+                $data_->where('description',$description);
             }
-            if($pos!='')
+            if($unit!='')
             {
-                $data_->where('pos',$pos);
+                $data_->where('unit',$unit);
             }
-            if($grade!='')
+            if($initial_stock!='')
             {
-                $data_->where('grade',$grade);
+                $data_->where('initial_stock',$initial_stock);
             }
-            if($idEmployee!='')
+            if($haveExp!='')
             {
-                $data_->where('id_employee',$idEmployee);
+                $data_->where('have_exp',$haveExp);
             }
-            if($nik!='')
+            if($stockIn!='')
             {
-                $data_->where('nik',$nik);
+                $data_->where('stock_in',$stockIn);
             }
-            if($phone!='')
+            if($stockOut!='')
             {
-                $data_->where('phone',$phone);
+                $data_->where('stock_out',$stockOut);
             }
-            if($dateOfBirth!='')
+            if($finalStock!='')
             {
-                $data_->where('date_of_birth',$dateOfBirth);
+                $data_->where('final_stock',$finalStock);
             }
-            if($age!='')
+            if($lastPrice!='')
             {
-                $data_->where('age',$age);
+                $data_->where('last_price',$lastPrice);
             }
-            if($dateOfJoin!='')
+            if($averagePrice!='')
             {
-                $data_->where('date_of_join',$dateOfJoin);
+                $data_->where('average_price',$averagePrice);
             }
-            if($yearsOfService!='')
+            if($totalPrice!='')
             {
-                $data_->where('years_of_service',$yearsOfService);
-            }
-            if($address!='')
-            {
-                $data_->where('address',$address);
-            }
-            if($city!='')
-            {
-                $data_->where('city',$city);
-            }
-            if($province!='')
-            {
-                $data_->where('province',$province);
-            }
-            if($email!='')
-            {
-                $data_->where('email',$email);
-            }
-            if($status!='')
-            {
-                $data_->where('status',$status);
+                $data_->where('total_price',$totalPrice);
             }
 
             if($data_->exists())
@@ -152,37 +128,31 @@ class Class_Stock extends Controller
     public function insert($request)
     {
         // set value variable
-        $idDepartemen = ''; $departemen=''; $idDepartemenSub=''; $departemenSub=''; $name=''; 
-        $pos=''; $grade=''; $idEmployee=''; $password=''; $nik=''; $phone=''; $dateOfBirth=''; $age=''; $dateOfJoin=''; $yearsOfService='';
-        $address=''; $city=''; $province=''; $email=''; $imageProfile=''; $status='1'; // 1=active;2=non active
-
-        // declare variable set
-        if (isset($request['id_departemen']) && $request['id_departemen']!='' ) {$idDepartemen = $request['id_departemen'];}
-        if (isset($request['departemen']) && $request['departemen']!='' ) {$departemen = $request['departemen'];}
-        if (isset($request['id_departemen_sub']) && $request['id_departemen_sub']!='' ) {$idDepartemenSub = $request['id_departemen_sub'];}
-        if (isset($request['departemen_sub']) && $request['departemen_sub']!='' ) {$departemenSub = $request['departemen_sub'];}
-        if (isset($request['name']) && $request['name']!='' ) {$name = $request['name'];}
-        if (isset($request['pos']) && $request['pos']!='' ) {$pos= $request['pos'];}
-        if (isset($request['grade']) && $request['grade']!='' ) {$grade = $request['grade'];}
-        if (isset($request['id_employee']) && $request['id_employee']!='' ) {$idEmployee = $request['id_employee'];}
-        if (isset($request['nik']) && $request['nik']!='' ) {$nik = $request['nik'];}
-        if (isset($request['phone']) && $request['phone']!='' ) {$phone = $request['phone'];}
-        if (isset($request['date_of_birth']) && $request['date_of_birth']!='' ) {$dateOfBirth = $request['date_of_birth'];}
-        if (isset($request['age']) && $request['age']!='' ) {$age = $request['age'];}
-        if (isset($request['date_of_join']) && $request['date_of_join']!='' ) {$dateOfJoin = $request['date_of_join'];}
-        if (isset($request['years_of_service']) && $request['years_of_service']!='' ) {$yearsOfService = $request['years_of_service'];}
-        if (isset($request['address']) && $request['address']!='' ) {$address = $request['address'];}
-        if (isset($request['city']) && $request['city']!='' ) {$city = $request['city'];}
-        if (isset($request['province']) && $request['province']!='' ) {$province = $request['province'];}
-        if (isset($request['email']) && $request['email']!='' ) {$email = $request['email'];}
-        if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}
+        $idItems=''; $itemGroups=''; $brand=''; $code=''; $items=''; $description=''; $unit=''; $initial_stock=''; $haveExp='';
+        $stockIn=''; $stockOut=''; $finalStock=''; $lastPrice=''; $averagePrice=''; $totalPrice='';
+        
+        if (isset($request['id_item']) && $request['id_item']!='' ) {$idItems = $request['id_item'];}
+        if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroups = $request['item_group'];}
+        if (isset($request['brand']) && $request['brand']!='' ) {$brand = $request['brand'];}
+        if (isset($request['code']) && $request['code']!='' ) {$code = $request['code'];}
+        if (isset($request['items']) && $request['items']!='' ) {$items = $request['items'];}
+        if (isset($request['description']) && $request['description']!='' ) {$description = $request['description'];}
+        if (isset($request['unit']) && $request['unit']!='' ) {$unit = $request['unit'];}
+        if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$idItems = $request['initial_stock'];}
+        if (isset($request['have_exp']) && $request['have_exp']!='' ) {$haveExp = $request['have_exp'];}
+        if (isset($request['stock_in']) && $request['stock_in']!='' ) {$stockIn = $request['stock_in'];}
+        if (isset($request['stock_out']) && $request['stock_out']!='' ) {$stockOut = $request['stock_out'];}
+        if (isset($request['final_stock']) && $request['final_stock']!='' ) {$finalStock = $request['final_stock'];}
+        if (isset($request['last_price']) && $request['last_price']!='' ) {$lastPrice = $request['last_price'];}
+        if (isset($request['average_price']) && $request['average_price']!='' ) {$averagePrice = $request['average_price'];}
+        if (isset($request['total_price']) && $request['total_price']!='' ) {$totalPrice = $request['total_price'];}
         
         try
         {
             // cek data
             $request=[];
-            $request['id_employee'] = $idEmployee;
-            $request['nik'] = $nik;
+            $request['id_item'] = $idItems;
+            $request['code'] = $code;
         
             $dataTransaction = $this->show($request);
             if(isset($dataTransaction))
@@ -192,28 +162,22 @@ class Class_Stock extends Controller
             }
             else
             {
-                $data = new employee();
-                $data->id_departemen = $idDepartemen;
-                $data->departemen = $departemen;
-                $data->id_departemen_sub = $idDepartemenSub;
-                $data->departemen_sub = $departemenSub; 
-                $data->name = $name; 
-                $data->pos = $pos; 
-                $data->grade = $grade; 
-                $data->id_employee = $idEmployee; 
-                $data->password = $password; 
-                $data->nik = $nik; 
-                $data->phone = $phone; 
-                $data->date_of_birth = $dateOfBirth; 
-                $data->age = $age; 
-                $data->date_of_join = $dateOfJoin;
-                $data->years_of_service = $yearsOfService;
-                $data->address = $address;
-                $data->city = $city; 
-                $data->province = $province; 
-                $data->email = $email; 
-                $data->image_profile = $imageProfile; 
-                $data->status = $status; 
+                $data = new stock();
+                $data->id_item = $idItems;
+                $data->item_group = $itemGroups;
+                $data->brand = $brand;
+                $data->code = $code; 
+                $data->items = $items; 
+                $data->description = $description; 
+                $data->unit = $unit; 
+                $data->initial_stock = $initial_stock; 
+                $data->have_exp = $haveExp; 
+                $data->stock_in = $stockIn; 
+                $data->stock_out = $stockOut; 
+                $data->final_stock = $finalStock; 
+                $data->last_price = $lastPrice; 
+                $data->average_price = $averagePrice;
+                $data->total_price = $totalPrice;
                 $data->save();
             }
             return $data;
@@ -245,27 +209,23 @@ class Class_Stock extends Controller
         {
             // declare variable set
             if (isset($request['id']) && $request['id']!='' ) {$id = $request['id'];}
-            if (isset($request['id_departemen']) && $request['id_departemen']!='' ) {$updateData['id_departemen'] = $request['id_departemen'];}
-            if (isset($request['departemen']) && $request['departemen']!='' ) {$updateData['departemen'] = $request['departemen'];}
-            if (isset($request['id_departemen_sub']) && $request['id_departemen_sub']!='' ) {$updateData['id_departemen_sub'] = $request['id_departemen_sub'];}
-            if (isset($request['departemen_sub']) && $request['departemen_sub']!='' ) {$updateData['departemen_sub'] = $request['departemen_sub'];}
-            if (isset($request['name']) && $request['name']!='' ) {$updateData['name'] = $request['name'];}
-            if (isset($request['pos']) && $request['pos']!='' ) {$updateData['pos'] = $request['pos'];}
-            if (isset($request['grade']) && $request['grade']!='' ) {$updateData['grade'] = $request['grade'];}
-            if (isset($request['id_employee']) && $request['id_employee']!='' ) {$updateData['id_employee'] = $request['id_employee'];}
-            if (isset($request['nik']) && $request['nik']!='' ) {$updateData['nik'] = $request['nik'];}
-            if (isset($request['phone']) && $request['phone']!='' ) {$updateData['phone'] = $request['phone'];}
-            if (isset($request['date_of_birth']) && $request['date_of_birth']!='' ) {$updateData['date_of_birth'] = $request['date_of_birth'];}
-            if (isset($request['age']) && $request['age']!='' ) {$updateData['age'] = $request['age'];}
-            if (isset($request['date_of_join']) && $request['date_of_join']!='' ) {$updateData['date_of_join'] = $request['date_of_join'];}
-            if (isset($request['years_of_service']) && $request['years_of_service']!='' ) {$updateData['years_of_service'] = $request['years_of_service'];}
-            if (isset($request['address']) && $request['address']!='' ) {$updateData['address'] = $request['address'];}
-            if (isset($request['city']) && $request['city']!='' ) {$updateData['city'] = $request['city'];}
-            if (isset($request['province']) && $request['province']!='' ) {$updateData['province'] = $request['province'];}
-            if (isset($request['email']) && $request['email']!='' ) {$updateData['email'] = $request['email'];}
-            if (isset($request['status']) && $request['status']!='' ) {$updateData['status'] = $request['status'];}
+            if (isset($request['id_item']) && $request['id_item']!='' ) {$updateData['id_item'] = $request['id_item'];}
+            if (isset($request['item_group']) && $request['item_group']!='' ) {$updateData['item_group'] = $request['item_group'];}
+            if (isset($request['brand']) && $request['brand']!='' ) {$updateData['brand'] = $request['brand'];}
+            if (isset($request['code']) && $request['code']!='' ) {$updateData['code'] = $request['code'];}
+            if (isset($request['items']) && $request['items']!='' ) {$updateData['items'] = $request['items'];}
+            if (isset($request['description']) && $request['description']!='' ) {$updateData['description'] = $request['description'];}
+            if (isset($request['unit']) && $request['unit']!='' ) {$updateData['unit'] = $request['unit'];}
+            if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$updateData['initital_stock'] = $request['initial_stock'];}
+            if (isset($request['have_exp']) && $request['have_exp']!='' ) {$updateData['have_exp'] = $request['have_exp'];}
+            if (isset($request['stock_in']) && $request['stock_in']!='' ) {$updateData['stock_in'] = $request['stock_in'];}
+            if (isset($request['stock_out']) && $request['stock_out']!='' ) {$updateData['stock_out'] = $request['stock_out'];}
+            if (isset($request['final_stock']) && $request['final_stock']!='' ) {$updateData['final_stock'] = $request['final_stock'];}
+            if (isset($request['last_price']) && $request['last_price']!='' ) {$updateData['last_price'] = $request['last_price'];}
+            if (isset($request['average_price']) && $request['average_price']!='' ) {$updateData['average_price'] = $request['average_price'];}
+            if (isset($request['total_price']) && $request['total_price']!='' ) {$updateData['total_price'] = $request['total_price'];}
            
-            DB::table('employee')
+            DB::table('stock')
             ->where('id','=',$id)
             ->update($updateData);
 
