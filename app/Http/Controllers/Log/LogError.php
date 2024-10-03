@@ -33,7 +33,7 @@ class LogError extends Controller
             {
                 return 'Message Tidak Boleh Kosong!';
             }
-            
+         
             $requestModule=[];
             $requestModule['reff'] = $request['reff'];
             $requestModule['service'] =  $request['service'];

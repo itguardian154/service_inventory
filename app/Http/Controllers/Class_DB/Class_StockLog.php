@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Class_DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Model\LogError;
+use App\Http\Controllers\Class_DB\Class_StockLog;
 use App\Models\stock_log;
 use Carbon\Carbon;
 use DateTime;
 
-class Class_StockLog extends Controller
+class Class_StockLog
 {
     /**
      * Read table

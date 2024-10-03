@@ -9,7 +9,7 @@ use App\Models\stock_expired;
 use Carbon\Carbon;
 use DateTime;
 
-class Class_StockExpired extends Controller
+class Class_StockExpired 
 {
     /**
      * Read table

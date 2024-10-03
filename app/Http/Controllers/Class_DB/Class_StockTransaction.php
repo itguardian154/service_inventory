@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Class_DB;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Model\LogError;
+use App\Http\Controllers\Log\LogError;
 use App\Models\stock_transaction;
 use Carbon\Carbon;
 use DateTime;
 
-class Class_StockTransaction extends Controller
+class Class_StockTransaction
 {
    /**
      * Read table

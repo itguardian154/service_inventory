@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use DateTime;
 
 
-class Class_StockGoodsReturn extends Controller
+class Class_StockGoodsReturn
 {
     /**
      * Read table

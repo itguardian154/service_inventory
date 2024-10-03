@@ -9,7 +9,7 @@ use App\Models\log_error;
 use Carbon\Carbon;
 use DateTime;
 
-class Class_LogError extends Controller
+class Class_LogError
 {
     /**
      * Read table

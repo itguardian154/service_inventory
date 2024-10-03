@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Class_DB;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Model\LogError;
+use App\Http\Controllers\Log\LogError;
 use App\Models\stock;
 use Carbon\Carbon;
 use DateTime;
 
-class Class_Stock extends Controller
+class Class_Stock
 {
     /**
      * Read table
@@ -146,22 +146,23 @@ class Class_Stock extends Controller
         if (isset($request['last_price']) && $request['last_price']!='' ) {$lastPrice = $request['last_price'];}
         if (isset($request['average_price']) && $request['average_price']!='' ) {$averagePrice = $request['average_price'];}
         if (isset($request['total_price']) && $request['total_price']!='' ) {$totalPrice = $request['total_price'];}
-        
+ 
         try
         {
             // cek data
-            $request=[];
-            $request['id_item'] = $idItems;
-            $request['code'] = $code;
+            // $request=[];
+            // $request['id_item'] = $idItems;
+            // $request['code'] = $code;
         
-            $dataTransaction = $this->show($request);
-            if(isset($dataTransaction))
-            {
-                // data sudah ada
-                return 'double data';
-            }
-            else
-            {
+            // $dataTransaction = $this->show($request);
+            // if(isset($dataTransaction))
+            // {
+            //     // data sudah ada
+            //     return 'double data';
+            // }
+            // else
+            // {
+
                 $data = new stock();
                 $data->id_item = $idItems;
                 $data->item_group = $itemGroups;
@@ -179,7 +180,7 @@ class Class_Stock extends Controller
                 $data->average_price = $averagePrice;
                 $data->total_price = $totalPrice;
                 $data->save();
-            }
+            // }
             return $data;
         } catch (\Exception $ex) {
             # Insert Log Error

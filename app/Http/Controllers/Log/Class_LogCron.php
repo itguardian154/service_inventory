@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use DateTime;
 
 
-class Class_LogCron extends Controller
+class Class_LogCron
 {
     /**
      * Read table

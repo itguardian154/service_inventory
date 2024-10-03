@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Model\Stock;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Log\LogError;
+use App\Http\Controllers\Class_DB\Class_Stock;
 
 class Stock extends Controller
 {
@@ -12,25 +14,21 @@ class Stock extends Controller
         try
         {
             $requestModule=[];
-            if (isset($request['id_departemen']) && $request['id_departemen']!='' ) {$requestModule['id_departemen'] = $request['id_departemen'];}
-            if (isset($request['departemen']) && $request['departemen']!='' ) {$requestModule['departemen'] = $request['departemen'];}
-            if (isset($request['id_departemen_sub']) && $request['id_departemen_sub']!='' ) {$requestModule['id_departemen_sub'] = $request['id_departemen_sub'];}
-            if (isset($request['departemen_sub']) && $request['departemen_sub']!='' ) {$requestModule['departemen_sub'] = $request['departemen_sub'];}
-            if (isset($request['name']) && $request['name']!='' ) {$requestModule['name'] = $request['name'];}
-            if (isset($request['pos']) && $request['pos']!='' ) {$requestModule['pos'] = $request['pos'];}
-            if (isset($request['grade']) && $request['grade']!='' ) {$requestModule['grade'] = $request['grade'];}
-            if (isset($request['id_Stock']) && $request['id_Stock']!='' ) {$requestModule['id_Stock'] = $request['id_Stock'];}
-            if (isset($request['nik']) && $request['nik']!='' ) {$requestModule['nik'] = $request['nik'];}
-            if (isset($request['phone']) && $request['phone']!='' ) {$requestModule['phone'] = $request['phone'];}
-            if (isset($request['date_of_birth']) && $request['date_of_birth']!='' ) {$requestModule['date_of_birth'] = $request['date_of_birth'];}
-            if (isset($request['age']) && $request['age']!='' ) {$requestModule['age'] = $request['age'];}
-            if (isset($request['date_of_join']) && $request['date_of_join']!='' ) {$requestModule['date_of_join'] = $request['date_of_join'];}
-            if (isset($request['years_of_service']) && $request['years_of_service']!='' ) {$requestModule['years_of_service'] = $request['years_of_service'];}
-            if (isset($request['address']) && $request['address']!='' ) {$requestModule['address'] = $request['address'];}
-            if (isset($request['city']) && $request['city']!='' ) {$requestModule['city'] = $request['city'];}
-            if (isset($request['province']) && $request['province']!='' ) {$requestModule['province'] = $request['province'];}
-            if (isset($request['email']) && $request['email']!='' ) {$requestModule['email'] = $request['email'];}
-            if (isset($request['status']) && $request['status']!='' ) {$requestModule['status'] = $request['status'];}
+            if (isset($request['id_item']) && $request['id_item']!='' ) {$requestModule['id_item'] = $request['id_item'];}
+            if (isset($request['item_group']) && $request['item_group']!='' ) {$requestModule['item_group'] = $request['item_group'];}
+            if (isset($request['brand']) && $request['brand']!='' ) {$requestModule['brand'] = $request['brand'];}
+            if (isset($request['code']) && $request['code']!='' ) {$requestModule['code'] = $request['code'];}
+            if (isset($request['items']) && $request['items']!='' ) {$requestModule['items'] = $request['items'];}
+            if (isset($request['description']) && $request['description']!='' ) {$requestModule['description'] = $request['description'];}
+            if (isset($request['unit']) && $request['unit']!='' ) {$requestModule['unit'] = $request['unit'];}
+            if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$requestModule['initial_stock'] = $request['initial_stock'];}
+            if (isset($request['have_exp']) && $request['have_exp']!='' ) {$requestModule['have_exp'] = $request['have_exp'];}
+            if (isset($request['stock_in']) && $request['stock_in']!='' ) {$requestModule['stock_in'] = $request['stock_in'];}
+            if (isset($request['stock_out']) && $request['stock_out']!='' ) {$requestModule['stock_out'] = $request['stock_out'];}
+            if (isset($request['final_stock']) && $request['final_stock']!='' ) {$requestModule['final_stock'] = $request['final_stock'];}
+            if (isset($request['last_price']) && $request['last_price']!='' ) {$requestModule['last_price'] = $request['last_price'];}
+            if (isset($request['average_price']) && $request['average_price']!='' ) {$requestModule['average_price'] = $request['average_price'];}
+            if (isset($request['total_price']) && $request['total_price']!='' ) {$requestModule['total_price'] = $request['total_price'];}
 
             $result=[];
             $classModel = new Class_Stock();
@@ -58,25 +56,21 @@ class Stock extends Controller
         try
         {
             $requestModule=[];
-            if (isset($request['id_departemen']) && $request['id_departemen']!='' ) {$requestModule['id_departemen'] = $request['id_departemen'];}
-            if (isset($request['departemen']) && $request['departemen']!='' ) {$requestModule['departemen'] = $request['departemen'];}
-            if (isset($request['id_departemen_sub']) && $request['id_departemen_sub']!='' ) {$requestModule['id_departemen_sub'] = $request['id_departemen_sub'];}
-            if (isset($request['departemen_sub']) && $request['departemen_sub']!='' ) {$requestModule['departemen_sub'] = $request['departemen_sub'];}
-            if (isset($request['name']) && $request['name']!='' ) {$requestModule['name'] = $request['name'];}
-            if (isset($request['pos']) && $request['pos']!='' ) {$requestModule['pos'] = $request['pos'];}
-            if (isset($request['grade']) && $request['grade']!='' ) {$requestModule['grade'] = $request['grade'];}
-            if (isset($request['id_Stock']) && $request['id_Stock']!='' ) {$requestModule['id_Stock'] = $request['id_Stock'];}
-            if (isset($request['nik']) && $request['nik']!='' ) {$requestModule['nik'] = $request['nik'];}
-            if (isset($request['phone']) && $request['phone']!='' ) {$requestModule['phone'] = $request['phone'];}
-            if (isset($request['date_of_birth']) && $request['date_of_birth']!='' ) {$requestModule['date_of_birth'] = $request['date_of_birth'];}
-            if (isset($request['age']) && $request['age']!='' ) {$requestModule['age'] = $request['age'];}
-            if (isset($request['date_of_join']) && $request['date_of_join']!='' ) {$requestModule['date_of_join'] = $request['date_of_join'];}
-            if (isset($request['years_of_service']) && $request['years_of_service']!='' ) {$requestModule['years_of_service'] = $request['years_of_service'];}
-            if (isset($request['address']) && $request['address']!='' ) {$requestModule['address'] = $request['address'];}
-            if (isset($request['city']) && $request['city']!='' ) {$requestModule['city'] = $request['city'];}
-            if (isset($request['province']) && $request['province']!='' ) {$requestModule['province'] = $request['province'];}
-            if (isset($request['email']) && $request['email']!='' ) {$requestModule['email'] = $request['email'];}
-            if (isset($request['status']) && $request['status']!='' ) {$requestModule['status'] = $request['status'];}
+            if (isset($request['id_item']) && $request['id_item']!='' ) {$requestModule['id_item'] = $request['id_item'];}
+            if (isset($request['item_group']) && $request['item_group']!='' ) {$requestModule['item_group'] = $request['item_group'];}
+            if (isset($request['brand']) && $request['brand']!='' ) {$requestModule['brand'] = $request['brand'];}
+            if (isset($request['code']) && $request['code']!='' ) {$requestModule['code'] = $request['code'];}
+            if (isset($request['items']) && $request['items']!='' ) {$requestModule['items'] = $request['items'];}
+            if (isset($request['description']) && $request['description']!='' ) {$requestModule['description'] = $request['description'];}
+            if (isset($request['unit']) && $request['unit']!='' ) {$requestModule['unit'] = $request['unit'];}
+            if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$requestModule['initial_stock'] = $request['initial_stock'];}
+            if (isset($request['have_exp']) && $request['have_exp']!='' ) {$requestModule['have_exp'] = $request['have_exp'];}
+            if (isset($request['stock_in']) && $request['stock_in']!='' ) {$requestModule['stock_in'] = $request['stock_in'];}
+            if (isset($request['stock_out']) && $request['stock_out']!='' ) {$requestModule['stock_out'] = $request['stock_out'];}
+            if (isset($request['final_stock']) && $request['final_stock']!='' ) {$requestModule['final_stock'] = $request['final_stock'];}
+            if (isset($request['last_price']) && $request['last_price']!='' ) {$requestModule['last_price'] = $request['last_price'];}
+            if (isset($request['average_price']) && $request['average_price']!='' ) {$requestModule['average_price'] = $request['average_price'];}
+            if (isset($request['total_price']) && $request['total_price']!='' ) {$requestModule['total_price'] = $request['total_price'];}
 
             $result=[];
             $classModel = new Class_Stock();
@@ -105,8 +99,21 @@ class Stock extends Controller
         {
             $requestModule=[];
             if (isset($request['id']) && $request['id']!='' ) {$requestModule['id'] = $request['id'];}
-            if (isset($request['id_departemen']) && $request['id_departemen']!='' ) {$requestModule['id_departemen'] = $request['id_departemen'];}
-            if (isset($request['departemen']) && $request['departemen']!='' ) {$requestModule['departemen'] = $request['departemen'];}
+            if (isset($request['id_item']) && $request['id_item']!='' ) {$requestModule['id_item'] = $request['id_item'];}
+            if (isset($request['item_group']) && $request['item_group']!='' ) {$requestModule['item_group'] = $request['item_group'];}
+            if (isset($request['brand']) && $request['brand']!='' ) {$requestModule['brand'] = $request['brand'];}
+            if (isset($request['code']) && $request['code']!='' ) {$requestModule['code'] = $request['code'];}
+            if (isset($request['items']) && $request['items']!='' ) {$requestModule['items'] = $request['items'];}
+            if (isset($request['description']) && $request['description']!='' ) {$requestModule['description'] = $request['description'];}
+            if (isset($request['unit']) && $request['unit']!='' ) {$requestModule['unit'] = $request['unit'];}
+            if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$requestModule['initial_stock'] = $request['initial_stock'];}
+            if (isset($request['have_exp']) && $request['have_exp']!='' ) {$requestModule['have_exp'] = $request['have_exp'];}
+            if (isset($request['stock_in']) && $request['stock_in']!='' ) {$requestModule['stock_in'] = $request['stock_in'];}
+            if (isset($request['stock_out']) && $request['stock_out']!='' ) {$requestModule['stock_out'] = $request['stock_out'];}
+            if (isset($request['final_stock']) && $request['final_stock']!='' ) {$requestModule['final_stock'] = $request['final_stock'];}
+            if (isset($request['last_price']) && $request['last_price']!='' ) {$requestModule['last_price'] = $request['last_price'];}
+            if (isset($request['average_price']) && $request['average_price']!='' ) {$requestModule['average_price'] = $request['average_price'];}
+            if (isset($request['total_price']) && $request['total_price']!='' ) {$requestModule['total_price'] = $request['total_price'];}
 
             $result=[];
             $classModel = new Class_Stock();

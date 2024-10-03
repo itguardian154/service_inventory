@@ -9,7 +9,7 @@ use App\Models\stock_adjustment;
 use Carbon\Carbon;
 use DateTime;
 
-class Class_StockAdjustmentAdjustment extends Controller
+class Class_StockAdjustmentAdjustment
 {
     /**
      * Read table
