@@ -36,7 +36,6 @@ class Class_Stock
         if (isset($request['average_price']) && $request['average_price']!='' ) {$averagePrice = $request['average_price'];}
         if (isset($request['total_price']) && $request['total_price']!='' ) {$totalPrice = $request['total_price'];}
 
-
         try
         {
             $data_ = DB::table('stock');

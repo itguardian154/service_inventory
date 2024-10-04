@@ -87,7 +87,7 @@ class Stock extends Controller
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();
-            $result = $classModel->insertLogError($request);
+            $result = $classModel->insertLogError($requestModule);
             # End Log Error
             return $ex;
         }
@@ -130,7 +130,7 @@ class Stock extends Controller
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();
-            $result = $classModel->insertLogError($request);
+            $result = $classModel->insertLogError($requestModule);
             # End Log Error
             return $ex;
         }
