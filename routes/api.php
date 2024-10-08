@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Service_Stock;
+use App\Http\Controllers\Service_StockAdjustment;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +21,7 @@ use App\Http\Controllers\Service_Stock;
 //     return $request->user();
 // });
 
-
+# STOCK
 Route::controller(Service_Stock::class)->group(function () {
     Route::get('get_stock', 'getStock');
     Route::post('insert_stock', 'insertStock');
@@ -28,3 +29,12 @@ Route::controller(Service_Stock::class)->group(function () {
     // Export
     Route::get('export_stock', 'exportStock');
 });
+
+Route::controller(Service_StockAdjustment::class)->group(function () {
+    Route::get('get_stock_adjustment', 'getStockAdjustment');
+    Route::post('insert_stock_adjustment', 'insertStockAdjustment');
+    Route::post('update_stock_adjustment', 'updateStockAdjustment');
+    // Export
+    Route::get('export_stock_adjustment', 'exportStockAdjustment');
+});
+# END STOCK

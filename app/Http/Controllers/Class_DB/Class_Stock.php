@@ -115,7 +115,7 @@ class Class_Stock
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();
-            $result = $classModel->insertLogError($request);
+            $result = $classModel->insertLogError($requestModule);
             # End Log Error
             return $ex;
         }
@@ -127,8 +127,8 @@ class Class_Stock
     public function insert($request)
     {
         // set value variable
-        $idItems=''; $itemGroups=''; $brand=''; $code=''; $items=''; $description=''; $unit=''; $initial_stock=''; $haveExp='';
-        $stockIn=''; $stockOut=''; $finalStock=''; $lastPrice=''; $averagePrice=''; $totalPrice='';
+        $idItems=''; $itemGroups=''; $brand=''; $code=''; $items=''; $description=''; $unit=''; $initialStock=0; $haveExp='';
+        $stockIn=0; $stockOut=0; $finalStock=0; $lastPrice=0; $averagePrice=0; $totalPrice=0;
         
         if (isset($request['id_item']) && $request['id_item']!='' ) {$idItems = $request['id_item'];}
         if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroups = $request['item_group'];}
@@ -137,7 +137,7 @@ class Class_Stock
         if (isset($request['items']) && $request['items']!='' ) {$items = $request['items'];}
         if (isset($request['description']) && $request['description']!='' ) {$description = $request['description'];}
         if (isset($request['unit']) && $request['unit']!='' ) {$unit = $request['unit'];}
-        if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$idItems = $request['initial_stock'];}
+        if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$initialStock = $request['initial_stock'];}
         if (isset($request['have_exp']) && $request['have_exp']!='' ) {$haveExp = $request['have_exp'];}
         if (isset($request['stock_in']) && $request['stock_in']!='' ) {$stockIn = $request['stock_in'];}
         if (isset($request['stock_out']) && $request['stock_out']!='' ) {$stockOut = $request['stock_out'];}
@@ -170,7 +170,7 @@ class Class_Stock
                 $data->items = $items; 
                 $data->description = $description; 
                 $data->unit = $unit; 
-                $data->initial_stock = $initial_stock; 
+                $data->initial_stock = $initialStock; 
                 $data->have_exp = $haveExp; 
                 $data->stock_in = $stockIn; 
                 $data->stock_out = $stockOut; 
@@ -191,7 +191,7 @@ class Class_Stock
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();
-            $result = $classModel->insertLogError($request);
+            $result = $classModel->insertLogError($requestModule);
             # End Log Error
             return $ex;
         }
@@ -240,7 +240,7 @@ class Class_Stock
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();
-            $result = $classModel->insertLogError($request);
+            $result = $classModel->insertLogError($requestModule);
             # End Log Error
             return $ex;
         }

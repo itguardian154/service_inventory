@@ -4,52 +4,57 @@ namespace App\Http\Controllers\Class_DB;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Log\LogError;
-use App\Models\stock_adjustment;
+use App\Http\Controllers\Model\LogError;
+use App\Models\stock_adjustment_history_approval;
 use Carbon\Carbon;
 use DateTime;
 
-class Class_StockAdjustment
+class Class_StockAdjustmentHistoryApproval
 {
-    /**
+     /**
      * Read table
      */ 
     public function show($request)
     {
         // set value variable
-        $noAdjustment=''; $date=''; $totalItem=''; $totalQty=''; $totalPrice=''; $status=''; $years=''; $reff='';
+        $noAdjustment=''; $ord=''; $pic=''; $name=''; $grade=''; $departemen=''; $signature=''; $status=''; $years='';
 
         if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
-        if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
-        if (isset($request['total_item']) && $request['total_item']!='' ) {$totalItem = $request['total_item'];}
-        if (isset($request['total_qty']) && $request['total_qty']!='' ) {$totalQty = $request['total_qty'];}
-        if (isset($request['total_price']) && $request['total_price']!='' ) {$totalPrice = $request['total_price'];}
+        if (isset($request['ord']) && $request['ord']!='' ) {$ord = $request['ord'];}
+        if (isset($request['pic']) && $request['pic']!='' ) {$pic = $request['pic'];}
+        if (isset($request['name']) && $request['name']!='' ) {$name = $request['name'];}
+        if (isset($request['grade']) && $request['grade']!='' ) {$grade = $request['grade'];}
+        if (isset($request['departemen']) && $request['departemen']!='' ) {$departemen = $request['departemen'];}
+        if (isset($request['signature']) && $request['signature']!='' ) {$signature = $request['signature'];}
         if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}
         if (isset($request['years']) && $request['years']!='' ) {$years = $request['years'];}
-        if (isset($request['reff']) && $request['reff']!='' ) {$reff = $request['reff'];}
 
         try
         {
-            $data_ = DB::table('stock_adjustment');
+            $data_ = DB::table('stock_adjustment_history_approval');
             if($noAdjustment!='')
             {
                 $data_->where('no_adjustment',$noAdjustment);
             }
-            if($date!='')
+            if($ord!='')
             {
-                $data_->where('date',$date);
+                $data_->where('ord',$ord);
             }
-            if($totalItem!='')
+            if($pic!='')
             {
-                $data_->where('total_item',$totalItem);
+                $data_->where('pic',$pic);
             }   
-            if($totalQty!='')
+            if($name!='')
             {
-                $data_->where('total_qty',$totalQty);
+                $data_->where('name',$name);
             }
-            if($totalPrice!='')
+            if($grade!='')
             {
-                $data_->where('total_price',$totalPrice);
+                $data_->where('grade',$grade);
+            }
+            if($signature!='')
+            {
+                $data_->where('signature',$signature);
             }
             if($status!='')
             {
@@ -59,12 +64,7 @@ class Class_StockAdjustment
             {
                 $data_->where('years',$years);
             }
-            if($reff!='')
-            {
-                $data_->where('reff',$reff);
-            }
            
-
             if($data_->exists())
             {
                 $data = $data_->get();
@@ -79,7 +79,7 @@ class Class_StockAdjustment
             $requestModule=[];
             $requestModule['reff'] = '-';
             $requestModule['service'] = 'Class';
-            $requestModule['class'] = 'Class_StockAdjustment';
+            $requestModule['class'] = 'Class_StockAdjustmentHistoryApproval';
             $requestModule['function'] = 'Show';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
@@ -96,16 +96,18 @@ class Class_StockAdjustment
     public function insert($request)
     {
         // set value variable
-        $noAdjustment=''; $date=''; $totalItem=''; $totalQty=''; $totalPrice=''; $status=''; $years=''; $reff='';
+        $noAdjustment=''; $ord=''; $pic=''; $name=''; $grade=''; $departemen=''; $signature=''; $status=''; $years='';
 
         if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
-        if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
-        if (isset($request['total_item']) && $request['total_item']!='' ) {$totalItem = $request['total_item'];}
-        if (isset($request['total_qty']) && $request['total_qty']!='' ) {$totalQty = $request['total_qty'];}
-        if (isset($request['total_price']) && $request['total_price']!='' ) {$totalPrice = $request['total_price'];}
+        if (isset($request['ord']) && $request['ord']!='' ) {$ord = $request['ord'];}
+        if (isset($request['pic']) && $request['pic']!='' ) {$pic = $request['pic'];}
+        if (isset($request['name']) && $request['name']!='' ) {$name = $request['name'];}
+        if (isset($request['grade']) && $request['grade']!='' ) {$grade = $request['grade'];}
+        if (isset($request['departemen']) && $request['departemen']!='' ) {$departemen = $request['departemen'];}
+        if (isset($request['signature']) && $request['signature']!='' ) {$signature = $request['signature'];}
         if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}
         if (isset($request['years']) && $request['years']!='' ) {$years = $request['years'];}
-        if (isset($request['reff']) && $request['reff']!='' ) {$reff = $request['reff'];}
+
         
         try
         {
@@ -122,15 +124,16 @@ class Class_StockAdjustment
             // }
             // else
             // {
-                $data = new stock_adjustment();
+                $data = new stock_adjustment_history_approval();
                 $data->no_adjustment = $noAdjustment;
-                $data->date = $date;
-                $data->total_item = $totalItem; 
-                $data->total_qty = $totalQty; 
-                $data->total_price = $totalPrice; 
+                $data->ord = $ord;
+                $data->pic = $pic; 
+                $data->name = $name; 
+                $data->grade = $grade; 
+                $data->departemen = $departemen; 
+                $data->signature = $signature; 
                 $data->status = $status; 
                 $data->years = $years; 
-                $data->reff = $reff; 
                 $data->save();
             // }
             return $data;
@@ -162,51 +165,28 @@ class Class_StockAdjustment
         {
             // declare variable set
             if (isset($request['id']) && $request['id']!='' ) {$id = $request['id'];}
+
             if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$updateData['no_adjustment'] = $request['no_adjustment'];}
-            if (isset($request['date']) && $request['date']!='' ) {$updateData['date'] = $request['date'];}
-            if (isset($request['total_item']) && $request['total_item']!='' ) {$updateData['total_item'] = $request['total_item'];}
-            if (isset($request['total_qty']) && $request['total_qty']!='' ) {$updateData['total_qty'] = $request['total_qty'];}
-            if (isset($request['total_price']) && $request['total_price']!='' ) {$updateData['total_price'] = $request['total_price'];}
+            if (isset($request['ord']) && $request['ord']!='' ) {$updateData['ord'] = $request['ord'];}
+            if (isset($request['pic']) && $request['pic']!='' ) {$updateData['pic'] = $request['pic'];}
+            if (isset($request['name']) && $request['name']!='' ) {$updateData['name'] = $request['name'];}
+            if (isset($request['grade']) && $request['grade']!='' ) {$updateData['grade'] = $request['grade'];}
+            if (isset($request['departemen']) && $request['departemen']!='' ) {$updateData['departemen'] = $request['departemen'];}
+            if (isset($request['signature']) && $request['signature']!='' ) {$updateData['signature'] = $request['signature'];}
             if (isset($request['status']) && $request['status']!='' ) {$updateData['status'] = $request['status'];}
             if (isset($request['years']) && $request['years']!='' ) {$updateData['years'] = $request['years'];}
-            if (isset($request['reff']) && $request['reff']!='' ) {$updateData['reff'] = $request['reff'];}
 
-            if($id!='')
-            {
-                DB::table('stock_adjustment')
-                ->where('id','=',$id)
-                ->update($updateData);
-            }
-            else
-            {
-                // by no adjustment
-                $noAdjustment='';
-                if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
-                if($noAdjustment!='')
-                {
-                    $requestClass = [];
-                    $requestClass['no_adjustment'] = $noAdjustment;
-                    $dataID = $this->show($requestClass);
-                    foreach($dataID as $v)
-                    {
-                        $id = $v->id;
-                        DB::table('stock_adjustment')
-                        ->where('id','=',$id)
-                        ->update($updateData);
-                    }
-                }
-                else
-                {
-                    return 'sistem tidak mengenali ID';
-                }      
-            }
+            DB::table('stock_adjustment_history_approval')
+            ->where('id','=',$id)
+            ->update($updateData);
+
             return $updateData;
         } catch (\Exception $ex) {
             # Insert Log Error
             $requestModule=[];
             $requestModule['reff'] = '-';
             $requestModule['service'] = 'Class';
-            $requestModule['class'] = 'Class_StockAdjustment';
+            $requestModule['class'] = 'Class_StockAdjustmentHistoryApproval';
             $requestModule['function'] = 'Update';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
