@@ -12,6 +12,7 @@ use App\Http\Controllers\Generate\GenerateID;
 use App\Http\Controllers\Class_DB\Class_StockAdjustment;
 use App\Http\Controllers\Class_DB\Class_StockAdjustmentDetail;
 use App\Http\Controllers\Class_DB\Class_StockAdjustmentHistoryApproval;
+use App\Http\Controllers\Model\RoleAccess\RoleAccessManagement;
 use App\Http\Controllers\Model\Stock\StockLog;
 
 class StockAdjustment extends Controller
@@ -170,23 +171,30 @@ class StockAdjustment extends Controller
             $history = new StockLog();
             $result['insert_history'] = $history->insertHistoryStock($requestHistory);
 
+            # get role access
+            $requestRoleAccess =[];
+            $requestRoleAccess['id_access_management'] = 'AA-001'; // approval_adjustment
+            $classRoleAccess = new RoleAccessManagement();
+            $resultRoleAccess = $classRoleAccess->getRoleAccess($requestRoleAccess);
+            foreach($resultRoleAccess['data']['get_roleAccessDetail'] as $v)
+            {
+                $requestModuleAdjustmentHistoryApproval=[];
+                $requestModuleAdjustmentHistoryApproval['no_adjustment']=$noAdjustment;
+                $requestModuleAdjustmentHistoryApproval['ord']=$v->ord;
+                $requestModuleAdjustmentHistoryApproval['pic']=$v->pic;
+                $requestModuleAdjustmentHistoryApproval['name']=$v->name;
+                $requestModuleAdjustmentHistoryApproval['grade']=$v->grade;
+                $requestModuleAdjustmentHistoryApproval['departemen']=$v->departemen;
+                $requestModuleAdjustmentHistoryApproval['signature']='';
+                $requestModuleAdjustmentHistoryApproval['status']='';
+                $requestModuleAdjustmentHistoryApproval['years']=$years;
+                # end declare variable history approval
+                
+                $classModel = new Class_StockAdjustmentHistoryApproval();
+                $result['insert_classAdjustmentHistoryApproval'] = $classModel->insert($requestModuleAdjustmentHistoryApproval);
+                
+            }
             # declare variable history approval
-            $noAdjustment=''; $ord='1'; $pic=''; $name='-'; $grade='-'; $departemen='-'; $signature='-'; $status='1';
-
-            $requestModuleAdjustmentHistoryApproval=[];
-            $requestModuleAdjustmentHistoryApproval['no_adjustment']=$noAdjustment;
-            $requestModuleAdjustmentHistoryApproval['ord']=$ord;
-            $requestModuleAdjustmentHistoryApproval['pic']=$reff;
-            $requestModuleAdjustmentHistoryApproval['name']=$name;
-            $requestModuleAdjustmentHistoryApproval['grade']=$grade;
-            $requestModuleAdjustmentHistoryApproval['departemen']=$departemen;
-            $requestModuleAdjustmentHistoryApproval['signature']=$signature;
-            $requestModuleAdjustmentHistoryApproval['status']=$status;
-            $requestModuleAdjustmentHistoryApproval['years']=$years;
-            # end declare variable history approval
-            
-            $classModel = new Class_StockAdjustmentHistoryApproval();
-            // $result['insert_classAdjustmentHistoryApproval'] = $classModel->insert($requestModuleAdjustmentHistoryApproval);
 
             DB::commit();
             return $result;
@@ -207,6 +215,104 @@ class StockAdjustment extends Controller
         }
     }
 
-    // private function property
+    public function updateAdjustment($request)
+    {
+        try
+        {
+            DB::beginTransaction();
+            // declare variable 
+            $id=''; $date=''; $reff='';$detailItem='';
+            $result=[];
+            # declare variable from request
+            if (isset($request['id']) && $request['id']!='' ) {$id = $request['id'];}
+            if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
+            if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}  
+            if (isset($request['reff']) && $request['reff']!='' ) {$reff = $request['reff'];}     
+            if (isset($request['detail_item']) && $request['detail_item']!='' ) {$detailItem = $request['detail_item'];}
+            # end declare variable request
+
+            # declare variable request adjustment
+            $requestModuleAdjustment=[];
+            $requestModuleAdjustment['id'] = $id;
+            $requestModuleAdjustment['date'] = $date;
+            $requestModuleAdjustment['status'] = $status;
+       
+            # end declare variable request adjustment
+            $classModel = new Class_StockAdjustment();
+            $result['update_classAdjustment'] = $classModel->update($requestModuleAdjustment);
+
+            # declare variable request detail
+            if($detailItem!='')
+            {
+                $jsonDecodeDetailItem = json_decode($detailItem);
+             
+                $price=0; $expDate=''; $remark='-';
+                foreach($jsonDecodeDetailItem as $v)
+                {
+                    $itemGroup='-'; $brand='-'; $code='-'; $items='-'; $description='-'; $typeTransaction=''; $qty=0; $unit='-';
+                    $totalItem++;
+                    $totalQty = $totalQty + $v->qty;
+                    $totalPrice = $totalPrice + $v->price;
+    
+                    $itemGroup = $v->item_group;
+                    $brand = $v->brand;
+                    $code = $v->code;
+                    $items = $v->items;
+                    $description = $v->description;
+                    $typeTransaction =  $v->type_transaction;
+                    $qty = $v->qty;
+                    $unit = $v->unit;
+                    $price = $v->price;
+                    $expDate = $v->exp_date;
+                    $remark = $v->remark;
+    
+                    $requestModuleAdjustmentDetail=[];
+                    $requestModuleAdjustmentDetail['no_adjustment'] = $noAdjustment;
+                    $requestModuleAdjustmentDetail['item_group'] = $itemGroup;
+                    $requestModuleAdjustmentDetail['brand'] =  $brand;
+                    $requestModuleAdjustmentDetail['code'] = $code;
+                    $requestModuleAdjustmentDetail['items'] =  $items;
+                    $requestModuleAdjustmentDetail['description'] = $description;
+                    $requestModuleAdjustmentDetail['type_transction'] = $typeTransaction;
+                    $requestModuleAdjustmentDetail['qty'] = $qty;
+                    $requestModuleAdjustmentDetail['unit'] = $unit;
+                    $requestModuleAdjustmentDetail['price'] = $price;
+                    $requestModuleAdjustmentDetail['exp_date'] = $expDate;
+                    $requestModuleAdjustmentDetail['remark'] = $remark;
+                    $requestModuleAdjustmentDetail['years'] = $years;
+                    $requestModuleAdjustmentDetail['reff'] = $reff;
+                    # end declare variable request detail
+                    $classModel = new Class_StockAdjustmentDetail();
+                    $result['insert_classAdjustmentDetail'] = $classModel->insert($requestModuleAdjustmentDetail);    
+                }
+    
+                // update master adjustment 
+                $requestModuleAdjustment=[];
+                $requestModuleAdjustment['id'] = $id;
+                $requestModuleAdjustment['total_item'] = $totalItem;
+                $requestModuleAdjustment['total_qty'] = $totalQty;
+                $requestModuleAdjustment['total_price'] = $totalPrice;
+                $classModel = new Class_StockAdjustment();
+                $result['update_classAdjustment'] = $classModel->update($requestModuleAdjustment);
+            }
+            
+            DB::commit();
+            return $result;
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            # Insert Log Error
+            $requestModule=[];
+            $requestModule['reff'] = '-';
+            $requestModule['service'] = 'Model';
+            $requestModule['class'] = 'StockAdjustment';
+            $requestModule['function'] = 'updateAdjustment';
+            $requestModule['message'] = $ex->getMessage();
+            $requestModule['note'] = '-';
+            $classModel = new LogError();
+            $result = $classModel->insertLogError($requestModule);
+            # End Log Error
+            return $ex;
+        }
+    }
 
 }

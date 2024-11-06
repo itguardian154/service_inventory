@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Generate;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\stock_adjustment;
+use App\Models\stock;
 
 use Carbon\Carbon;
 

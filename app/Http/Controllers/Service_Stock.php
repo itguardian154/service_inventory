@@ -7,6 +7,7 @@ use App\Http\Controllers\Log\LogError;
 use App\Http\Controllers\Model\Stock\Stock;
 use App\Http\Controllers\Model\Stock\StockLog;
 use App\Models\stock as model_stock;
+
 use App\Exports\Export_Stock;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -87,9 +88,11 @@ class Service_Stock extends Controller
     {
         try
         {
-            $idItems = model_stock::max('id') + 1;
+            // call ID Genrate from Stock
+            $classGenerate = new GenerateID();
+            $idItem = $classGenerate->getIDItem();
 
-            $request['id_item'] = $idItems;
+            $request['id_item'] = $idItem;
             $ticket = new Stock();
             $result['insert_stock'] = $ticket->insertStock($request); 
      
@@ -135,7 +138,7 @@ class Service_Stock extends Controller
 
             // insert History
             $requestHistory = [];
-            $requestHistory['id_item'] = $request['id_item'];
+            $requestHistory['id_item'] = $request['id'];
             $requestHistory['reff'] = $request['reff'];
             $requestHistory['activity'] = 'Update Stock';
             $requestHistory['detail_act'] = json_encode($request->all());

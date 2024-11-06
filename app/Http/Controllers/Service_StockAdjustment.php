@@ -114,23 +114,13 @@ class Service_StockAdjustment extends Controller
         }  
     }
 
-    public function updateStock(Request $request)
+    public function updateStockAdjustment(Request $request)
     {
         try
         {
-            $stock = new Stock();
-            $result['update_stock'] = $stock->updateStock($request); 
+            $classModel = new StockAdjustment();
+            $result['update_stock_adjustment'] = $classModel->updateAdjustment($request); 
 
-            // insert History
-            $requestHistory = [];
-            $requestHistory['id_item'] = $request['id_item'];
-            $requestHistory['reff'] = $request['reff'];
-            $requestHistory['activity'] = 'Update Stock Adjustment';
-            $requestHistory['detail_act'] = json_encode($request->all());
-
-            $history = new StockLog();
-            $result['insert_history'] = $history->insertHistoryStock($requestHistory);
-            
             $result=response()->json([
                 'status' => 'success',
                 'message' => 'Update Stock Adjustment Successfuly',

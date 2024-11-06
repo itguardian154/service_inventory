@@ -17,10 +17,9 @@ class Class_Stock
     public function show($request)
     {
         // set value variable
-        $idItems=''; $itemGroups=''; $brand=''; $code=''; $items=''; $description=''; $unit=''; $initial_stock=''; $haveExp='';
+        $itemGroups=''; $brand=''; $code=''; $items=''; $description=''; $unit=''; $initial_stock=''; $haveExp='';
         $stockIn=''; $stockOut=''; $finalStock=''; $lastPrice=''; $averagePrice=''; $totalPrice='';
         
-        if (isset($request['id_item']) && $request['id_item']!='' ) {$idItems = $request['id_item'];}
         if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroups = $request['item_group'];}
         if (isset($request['brand']) && $request['brand']!='' ) {$brand = $request['brand'];}
         if (isset($request['code']) && $request['code']!='' ) {$code = $request['code'];}
@@ -39,10 +38,6 @@ class Class_Stock
         try
         {
             $data_ = DB::table('stock');
-            if($idItems!='')
-            {
-                $data_->where('id_item',$idItems);
-            }
             if($itemGroups!='')
             {
                 $data_->where('item_group',$itemGroups);
@@ -127,10 +122,9 @@ class Class_Stock
     public function insert($request)
     {
         // set value variable
-        $idItems=''; $itemGroups=''; $brand=''; $code=''; $items=''; $description=''; $unit=''; $initialStock=0; $haveExp='';
+        $itemGroups=''; $brand=''; $code=''; $items=''; $description=''; $unit=''; $initialStock=0; $haveExp='';
         $stockIn=0; $stockOut=0; $finalStock=0; $lastPrice=0; $averagePrice=0; $totalPrice=0;
         
-        if (isset($request['id_item']) && $request['id_item']!='' ) {$idItems = $request['id_item'];}
         if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroups = $request['item_group'];}
         if (isset($request['brand']) && $request['brand']!='' ) {$brand = $request['brand'];}
         if (isset($request['code']) && $request['code']!='' ) {$code = $request['code'];}
@@ -163,7 +157,6 @@ class Class_Stock
             // {
 
                 $data = new stock();
-                $data->id_item = $idItems;
                 $data->item_group = $itemGroups;
                 $data->brand = $brand;
                 $data->code = $code; 
@@ -209,7 +202,6 @@ class Class_Stock
         {
             // declare variable set
             if (isset($request['id']) && $request['id']!='' ) {$id = $request['id'];}
-            if (isset($request['id_item']) && $request['id_item']!='' ) {$updateData['id_item'] = $request['id_item'];}
             if (isset($request['item_group']) && $request['item_group']!='' ) {$updateData['item_group'] = $request['item_group'];}
             if (isset($request['brand']) && $request['brand']!='' ) {$updateData['brand'] = $request['brand'];}
             if (isset($request['code']) && $request['code']!='' ) {$updateData['code'] = $request['code'];}

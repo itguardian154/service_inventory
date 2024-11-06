@@ -14,7 +14,6 @@ class Stock extends Controller
         try
         {
             $requestModule=[];
-            if (isset($request['id_item']) && $request['id_item']!='' ) {$requestModule['id_item'] = $request['id_item'];}
             if (isset($request['item_group']) && $request['item_group']!='' ) {$requestModule['item_group'] = $request['item_group'];}
             if (isset($request['brand']) && $request['brand']!='' ) {$requestModule['brand'] = $request['brand'];}
             if (isset($request['code']) && $request['code']!='' ) {$requestModule['code'] = $request['code'];}
