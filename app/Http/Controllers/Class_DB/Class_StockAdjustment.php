@@ -96,7 +96,7 @@ class Class_StockAdjustment
     public function insert($request)
     {
         // set value variable
-        $noAdjustment=''; $date=''; $totalItem=''; $totalQty=''; $totalPrice=''; $status=''; $years=''; $reff='';
+        $noAdjustment=''; $date=''; $totalItem=''; $totalQty=''; $totalPrice=''; $status='0'; $years=''; $reff='';
 
         if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
         if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}

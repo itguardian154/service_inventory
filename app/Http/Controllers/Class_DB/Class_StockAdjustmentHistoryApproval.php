@@ -96,11 +96,12 @@ class Class_StockAdjustmentHistoryApproval
     public function insert($request)
     {
         // set value variable
-        $noAdjustment=''; $ord=''; $pic=''; $name=''; $grade=''; $departemen=''; $signature=''; $status=''; $years='';
+        $noAdjustment='-'; $ord='0'; $pic='-';$idKaryawan='-'; $name='-'; $grade='-'; $departemen='-'; $signature='-'; $status='0'; $years='-';
 
         if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
         if (isset($request['ord']) && $request['ord']!='' ) {$ord = $request['ord'];}
         if (isset($request['pic']) && $request['pic']!='' ) {$pic = $request['pic'];}
+        if (isset($request['id_karyawan']) && $request['id_karyawan']!='' ) {$idKaryawan = $request['id_karyawan'];}
         if (isset($request['name']) && $request['name']!='' ) {$name = $request['name'];}
         if (isset($request['grade']) && $request['grade']!='' ) {$grade = $request['grade'];}
         if (isset($request['departemen']) && $request['departemen']!='' ) {$departemen = $request['departemen'];}
@@ -128,6 +129,7 @@ class Class_StockAdjustmentHistoryApproval
                 $data->no_adjustment = $noAdjustment;
                 $data->ord = $ord;
                 $data->pic = $pic; 
+                $data->id_karyawan = $idKaryawan;
                 $data->name = $name; 
                 $data->grade = $grade; 
                 $data->departemen = $departemen; 
@@ -174,6 +176,8 @@ class Class_StockAdjustmentHistoryApproval
             if (isset($request['departemen']) && $request['departemen']!='' ) {$updateData['departemen'] = $request['departemen'];}
             if (isset($request['signature']) && $request['signature']!='' ) {$updateData['signature'] = $request['signature'];}
             if (isset($request['status']) && $request['status']!='' ) {$updateData['status'] = $request['status'];}
+            if (isset($request['date']) && $request['date']!='' ) {$updateData['date'] = $request['date'];}
+            if (isset($request['note']) && $request['note']!='' ) {$updateData['note'] = $request['note'];}
             if (isset($request['years']) && $request['years']!='' ) {$updateData['years'] = $request['years'];}
 
             DB::table('stock_adjustment_history_approval')

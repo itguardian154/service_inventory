@@ -17,27 +17,31 @@ class Class_Stock
     public function show($request)
     {
         // set value variable
-        $itemGroups=''; $brand=''; $code=''; $items=''; $description=''; $unit=''; $initial_stock=''; $haveExp='';
-        $stockIn=''; $stockOut=''; $finalStock=''; $lastPrice=''; $averagePrice=''; $totalPrice='';
-        
+        $id=''; $itemGroups=''; $brand=''; $code=''; $items=''; $description=''; $unit=''; $haveExp='';
+
+        if (isset($request['id']) && $request['id']!='' ) {$id = $request['id'];}
         if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroups = $request['item_group'];}
         if (isset($request['brand']) && $request['brand']!='' ) {$brand = $request['brand'];}
         if (isset($request['code']) && $request['code']!='' ) {$code = $request['code'];}
         if (isset($request['items']) && $request['items']!='' ) {$items = $request['items'];}
         if (isset($request['description']) && $request['description']!='' ) {$description = $request['description'];}
         if (isset($request['unit']) && $request['unit']!='' ) {$unit = $request['unit'];}
-        if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$idItems = $request['initial_stock'];}
         if (isset($request['have_exp']) && $request['have_exp']!='' ) {$haveExp = $request['have_exp'];}
-        if (isset($request['stock_in']) && $request['stock_in']!='' ) {$stockIn = $request['stock_in'];}
-        if (isset($request['stock_out']) && $request['stock_out']!='' ) {$stockOut = $request['stock_out'];}
-        if (isset($request['final_stock']) && $request['final_stock']!='' ) {$finalStock = $request['final_stock'];}
-        if (isset($request['last_price']) && $request['last_price']!='' ) {$lastPrice = $request['last_price'];}
-        if (isset($request['average_price']) && $request['average_price']!='' ) {$averagePrice = $request['average_price'];}
-        if (isset($request['total_price']) && $request['total_price']!='' ) {$totalPrice = $request['total_price'];}
 
         try
         {
             $data_ = DB::table('stock');
+            if($id!='')
+            {
+                $data_->where('id',$id);
+
+                $data = $data_->get();
+                return [
+                    'success' => true,
+                    'message' => 'Get successful',
+                    'data' => $data
+                ];
+            }
             if($itemGroups!='')
             {
                 $data_->where('item_group',$itemGroups);
@@ -58,46 +62,28 @@ class Class_Stock
             {
                 $data_->where('unit',$unit);
             }
-            if($initial_stock!='')
-            {
-                $data_->where('initial_stock',$initial_stock);
-            }
             if($haveExp!='')
             {
                 $data_->where('have_exp',$haveExp);
-            }
-            if($stockIn!='')
-            {
-                $data_->where('stock_in',$stockIn);
-            }
-            if($stockOut!='')
-            {
-                $data_->where('stock_out',$stockOut);
-            }
-            if($finalStock!='')
-            {
-                $data_->where('final_stock',$finalStock);
-            }
-            if($lastPrice!='')
-            {
-                $data_->where('last_price',$lastPrice);
-            }
-            if($averagePrice!='')
-            {
-                $data_->where('average_price',$averagePrice);
-            }
-            if($totalPrice!='')
-            {
-                $data_->where('total_price',$totalPrice);
             }
 
             if($data_->exists())
             {
                 $data = $data_->get();
+                return [
+                    'success' => true,
+                    'message' => 'Get successful',
+                    'data' => $data
+                ];
             }
             else
             {
                 $data = null;
+                return [
+                    'success' => false,
+                    'message' => 'Data Not Found',
+                    'data' => $data
+                ];
             }
             return $data;
         } catch (\Exception $ex) {
@@ -112,7 +98,10 @@ class Class_Stock
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 
@@ -143,19 +132,21 @@ class Class_Stock
         try
         {
             // cek data
-            // $request=[];
-            // $request['id_item'] = $idItems;
-            // $request['code'] = $code;
+            $request=[];
+            $request['code'] = $code;
         
-            // $dataTransaction = $this->show($request);
-            // if(isset($dataTransaction))
-            // {
-            //     // data sudah ada
-            //     return 'double data';
-            // }
-            // else
-            // {
-
+            $dataTransaction = $this->show($request);
+     
+            if($dataTransaction['success'])
+            {
+                return [
+                    'success' => false,
+                    'message' => 'Double Data',
+                    'data' => $dataTransaction
+                ];
+            }
+            else
+            {
                 $data = new stock();
                 $data->item_group = $itemGroups;
                 $data->brand = $brand;
@@ -172,7 +163,13 @@ class Class_Stock
                 $data->average_price = $averagePrice;
                 $data->total_price = $totalPrice;
                 $data->save();
-            // }
+                
+                return [
+                    'success' => true,
+                    'message' => 'Insert successful',
+                    'data' => $data
+                ];
+            }
             return $data;
         } catch (\Exception $ex) {
             # Insert Log Error
@@ -186,7 +183,10 @@ class Class_Stock
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 
@@ -208,7 +208,7 @@ class Class_Stock
             if (isset($request['items']) && $request['items']!='' ) {$updateData['items'] = $request['items'];}
             if (isset($request['description']) && $request['description']!='' ) {$updateData['description'] = $request['description'];}
             if (isset($request['unit']) && $request['unit']!='' ) {$updateData['unit'] = $request['unit'];}
-            if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$updateData['initital_stock'] = $request['initial_stock'];}
+            if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$updateData['initial_stock'] = $request['initial_stock'];}
             if (isset($request['have_exp']) && $request['have_exp']!='' ) {$updateData['have_exp'] = $request['have_exp'];}
             if (isset($request['stock_in']) && $request['stock_in']!='' ) {$updateData['stock_in'] = $request['stock_in'];}
             if (isset($request['stock_out']) && $request['stock_out']!='' ) {$updateData['stock_out'] = $request['stock_out'];}
@@ -216,12 +216,16 @@ class Class_Stock
             if (isset($request['last_price']) && $request['last_price']!='' ) {$updateData['last_price'] = $request['last_price'];}
             if (isset($request['average_price']) && $request['average_price']!='' ) {$updateData['average_price'] = $request['average_price'];}
             if (isset($request['total_price']) && $request['total_price']!='' ) {$updateData['total_price'] = $request['total_price'];}
-           
+     
             DB::table('stock')
             ->where('id','=',$id)
             ->update($updateData);
-
-            return $updateData;
+   
+            return [
+                'success' => true,
+                'message' => 'Update successfuly',
+                'data' => $updateData
+            ];
         } catch (\Exception $ex) {
             # Insert Log Error
             $requestModule=[];
@@ -234,7 +238,10 @@ class Class_Stock
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 }

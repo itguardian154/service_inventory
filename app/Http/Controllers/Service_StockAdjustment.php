@@ -119,7 +119,7 @@ class Service_StockAdjustment extends Controller
         try
         {
             $classModel = new StockAdjustment();
-            $result['update_stock_adjustment'] = $classModel->updateAdjustment($request); 
+            $result = $classModel->updateAdjustment($request); 
 
             $result=response()->json([
                 'status' => 'success',

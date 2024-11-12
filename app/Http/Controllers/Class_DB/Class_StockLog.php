@@ -53,10 +53,20 @@ class Class_StockLog
             if($data_->exists())
             {
                 $data = $data_->get();
+                return [
+                    'success' => true,
+                    'message' => 'Get successful',
+                    'data' => $data
+                ];
             }
             else
             {
                 $data = null;
+                return [
+                    'success' => false,
+                    'message' => 'Data Not Found',
+                    'data' => $data
+                ];
             }
             return $data;
         } catch (\Exception $ex) {
@@ -71,7 +81,10 @@ class Class_StockLog
             $classModel = new LogError();
             $result = $classModel->insertLogError($request);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 
@@ -111,6 +124,11 @@ class Class_StockLog
                 $data->detail_act = $detailAct; 
                 $data->years = $years; 
                 $data->save();
+                return [
+                    'success' => true,
+                    'message' => 'Insert successful',
+                    'data' => $data
+                ];
             // }
             return $data;
         } catch (\Exception $ex) {
@@ -125,7 +143,10 @@ class Class_StockLog
             $classModel = new LogError();
             $result = $classModel->insertLogError($request);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 

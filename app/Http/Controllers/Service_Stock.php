@@ -20,13 +20,24 @@ class Service_Stock extends Controller
         try
         {
             $module = new Stock();
-            $data = $module->getStock($request); 
+            $resultModel = $module->getStock($request); 
             
-            $result=response()->json([
-                'status' => 'success',
-                'message' => 'Get Stock Successfuly',
-                'data' => $data
-            ]);
+            if($resultModel['success'])
+            {
+                $result=response()->json([
+                    'status' => 'success',
+                    'message' => 'Get Data Successfuly',
+                    'data' => $resultModel['data']
+                ]);
+            }
+            else
+            {
+                $result=response()->json([
+                    'status' => 'failed',
+                    'message' => 'Error Get Data',
+                    'data' => $resultModel
+                ]);
+            }
 
             return $result;
         } catch (\Exception $ex) {
@@ -36,6 +47,49 @@ class Service_Stock extends Controller
             $requestModule['service'] = 'Get-Stock';
             $requestModule['class'] = 'Service_Stock';
             $requestModule['function'] = 'getStock';
+            $requestModule['message'] = $ex->getMessage();
+            $requestModule['note'] = '-';
+            $classModel = new LogError();
+            $result = $classModel->insertLogError($requestModule);
+            # End Log Error
+            return $ex;
+        }  
+    }
+
+    public function insertStock(Request $request)
+    {
+        try
+        {
+          
+            $result = [];
+            $classModel = new Stock();
+            $resultModel = $classModel->insertStock($request); 
+            
+            if($resultModel['success'])
+            {
+                $result=response()->json([
+                    'status' => 'success',
+                    'message' => 'Created Transaction Items Successfuly',
+                    'data' => $resultModel['data']
+                ]);
+            }
+            else
+            {
+                $result=response()->json([
+                    'status' => 'failed',
+                    'message' => 'Error Created Transaction Items',
+                    'data' => $resultModel['message']
+                ]);
+            }
+            return $result;
+        } catch (\Exception $ex) {
+        
+            # Insert Log Error
+            $requestModule=[];
+            $requestModule['reff'] = 'Service';
+            $requestModule['service'] = 'Insert-Stock';
+            $requestModule['class'] = 'Service_Stock';
+            $requestModule['function'] = 'InsertStock';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();
@@ -84,50 +138,7 @@ class Service_Stock extends Controller
         }  
     }
 
-    public function insertStock(Request $request)
-    {
-        try
-        {
-            // call ID Genrate from Stock
-            $classGenerate = new GenerateID();
-            $idItem = $classGenerate->getIDItem();
-
-            $request['id_item'] = $idItem;
-            $ticket = new Stock();
-            $result['insert_stock'] = $ticket->insertStock($request); 
-     
-            // insert History
-            $requestHistory = [];
-            $requestHistory['id_item'] = $request['id_item'];
-            $requestHistory['reff'] = $request['reff'];
-            $requestHistory['activity'] = 'Insert Stock';
-            $requestHistory['detail_act'] = json_encode($request->all());
-
-            $history = new StockLog();
-            $result['insert_history'] = $history->insertHistoryStock($requestHistory);
-            
-            $result=response()->json([
-                'status' => 'success',
-                'message' => 'Insert Employee Successfuly',
-                'data' => $result
-            ]);
-
-            return $result;
-        } catch (\Exception $ex) {
-            # Insert Log Error
-            $requestModule=[];
-            $requestModule['reff'] = 'Service';
-            $requestModule['service'] = 'Insert-Stock';
-            $requestModule['class'] = 'Service_Stock';
-            $requestModule['function'] = 'InsertStock';
-            $requestModule['message'] = $ex->getMessage();
-            $requestModule['note'] = '-';
-            $classModel = new LogError();
-            $result = $classModel->insertLogError($requestModule);
-            # End Log Error
-            return $ex;
-        }  
-    }
+ 
 
     public function updateStock(Request $request)
     {
