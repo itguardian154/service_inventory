@@ -97,10 +97,20 @@ class Class_StockAdjustmentDetail
             if($data_->exists())
             {
                 $data = $data_->get();
+                return [
+                    'success' => true,
+                    'message' => 'Get successful',
+                    'data' => $data
+                ];
             }
             else
             {
                 $data = null;
+                return [
+                    'success' => false,
+                    'message' => 'Data Not Found',
+                    'data' => $data
+                ];
             }
             return $data;
         } catch (\Exception $ex) {
@@ -115,7 +125,10 @@ class Class_StockAdjustmentDetail
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 
@@ -173,6 +186,12 @@ class Class_StockAdjustmentDetail
                 $data->years = $years; 
                 $data->reff = $reff; 
                 $data->save();
+
+                return [
+                    'success' => true,
+                    'message' => 'Insert successful',
+                    'data' => $data
+                ];
             // }
             return $data;
         } catch (\Exception $ex) {
@@ -187,7 +206,10 @@ class Class_StockAdjustmentDetail
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 
@@ -222,7 +244,11 @@ class Class_StockAdjustmentDetail
             ->where('id','=',$id)
             ->update($updateData);
 
-            return $updateData;
+            return [
+                'success' => true,
+                'message' => 'Update successfuly',
+                'data' => $updateData
+            ];
         } catch (\Exception $ex) {
             # Insert Log Error
             $requestModule=[];
@@ -235,7 +261,10 @@ class Class_StockAdjustmentDetail
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 }

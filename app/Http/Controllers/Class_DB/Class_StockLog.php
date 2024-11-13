@@ -124,6 +124,7 @@ class Class_StockLog
                 $data->detail_act = $detailAct; 
                 $data->years = $years; 
                 $data->save();
+                
                 return [
                     'success' => true,
                     'message' => 'Insert successful',

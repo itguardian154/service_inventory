@@ -99,14 +99,16 @@ class Class_RoleAccessManagement
             // $request['code'] = $code;
         
             // $dataTransaction = $this->show($request);
-            // if(isset($dataTransaction))
+            // if($dataTransaction['success'])
             // {
-            //     // data sudah ada
-            //     return 'double data';
+            //     return [
+            //         'success' => false,
+            //         'message' => 'Double Data',
+            //         'data' => $dataTransaction
+            //     ];
             // }
             // else
             // {
-
                 $data = new role_access_management();
                 $data->id_access_management = $idAccessManagement;
                 $data->rolle_name = $rolleName;
@@ -120,7 +122,7 @@ class Class_RoleAccessManagement
                     'data' => $data
                 ];
             // }
-       
+            // return $data;
         } catch (\Exception $ex) {
             # Insert Log Error
             $requestModule=[];

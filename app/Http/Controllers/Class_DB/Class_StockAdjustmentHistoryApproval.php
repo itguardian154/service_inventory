@@ -17,10 +17,11 @@ class Class_StockAdjustmentHistoryApproval
     public function show($request)
     {
         // set value variable
-        $noAdjustment=''; $ord=''; $pic=''; $name=''; $grade=''; $departemen=''; $signature=''; $status=''; $years='';
+        $noAdjustment=''; $ord=''; $idRoleAccess=''; $pic=''; $name=''; $grade=''; $departemen=''; $signature=''; $status=''; $years='';
 
         if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
         if (isset($request['ord']) && $request['ord']!='' ) {$ord = $request['ord'];}
+        if (isset($request['id_role_access']) && $request['id_role_access']!='' ) {$idRoleAccess = $request['id_role_access'];}
         if (isset($request['pic']) && $request['pic']!='' ) {$pic = $request['pic'];}
         if (isset($request['name']) && $request['name']!='' ) {$name = $request['name'];}
         if (isset($request['grade']) && $request['grade']!='' ) {$grade = $request['grade'];}
@@ -39,6 +40,10 @@ class Class_StockAdjustmentHistoryApproval
             if($ord!='')
             {
                 $data_->where('ord',$ord);
+            }
+            if($idRoleAccess!='')
+            {
+                $data_->where('id_role_access',$idRoleAccess);
             }
             if($pic!='')
             {
@@ -68,10 +73,20 @@ class Class_StockAdjustmentHistoryApproval
             if($data_->exists())
             {
                 $data = $data_->get();
+                return [
+                    'success' => true,
+                    'message' => 'Get successful',
+                    'data' => $data
+                ];
             }
             else
             {
                 $data = null;
+                return [
+                    'success' => false,
+                    'message' => 'Data Not Found',
+                    'data' => $data
+                ];
             }
             return $data;
         } catch (\Exception $ex) {
@@ -86,7 +101,10 @@ class Class_StockAdjustmentHistoryApproval
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 
@@ -96,10 +114,11 @@ class Class_StockAdjustmentHistoryApproval
     public function insert($request)
     {
         // set value variable
-        $noAdjustment='-'; $ord='0'; $pic='-';$idKaryawan='-'; $name='-'; $grade='-'; $departemen='-'; $signature='-'; $status='0'; $years='-';
+        $noAdjustment='-'; $ord='0'; $idRoleAccess=''; $pic='-';$idKaryawan='-'; $name='-'; $grade='-'; $departemen='-'; $signature='-'; $status='0'; $years='-';
 
         if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
         if (isset($request['ord']) && $request['ord']!='' ) {$ord = $request['ord'];}
+        if (isset($request['id_role_access']) && $request['id_role_access']!='' ) {$idRoleAccess = $request['id_role_access'];}
         if (isset($request['pic']) && $request['pic']!='' ) {$pic = $request['pic'];}
         if (isset($request['id_karyawan']) && $request['id_karyawan']!='' ) {$idKaryawan = $request['id_karyawan'];}
         if (isset($request['name']) && $request['name']!='' ) {$name = $request['name'];}
@@ -113,21 +132,27 @@ class Class_StockAdjustmentHistoryApproval
         try
         {
             // cek data
-            // $request=[];
-            // $request['id_item'] = $idItems;
-            // $request['code'] = $code;
+            $request=[];
+            $request['no_adjustment'] = $noAdjustment;
+            $request['ord'] = $ord;
+            $request['id_role_access'] = $idRoleAccess;
+            $request['grade'] = $grade;
         
-            // $dataTransaction = $this->show($request);
-            // if(isset($dataTransaction))
-            // {
-            //     // data sudah ada
-            //     return 'double data';
-            // }
-            // else
-            // {
+            $dataTransaction = $this->show($request);
+            if($dataTransaction['success'])
+            {
+                return [
+                    'success' => false,
+                    'message' => 'Double Data',
+                    'data' => $dataTransaction
+                ];
+            }
+            else
+            {
                 $data = new stock_adjustment_history_approval();
                 $data->no_adjustment = $noAdjustment;
                 $data->ord = $ord;
+                $data->id_role_access = $idRoleAccess;
                 $data->pic = $pic; 
                 $data->id_karyawan = $idKaryawan;
                 $data->name = $name; 
@@ -137,7 +162,13 @@ class Class_StockAdjustmentHistoryApproval
                 $data->status = $status; 
                 $data->years = $years; 
                 $data->save();
-            // }
+
+                return [
+                    'success' => true,
+                    'message' => 'Insert successful',
+                    'data' => $data
+                ];
+            }
             return $data;
         } catch (\Exception $ex) {
             # Insert Log Error
@@ -151,7 +182,10 @@ class Class_StockAdjustmentHistoryApproval
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 
@@ -184,7 +218,11 @@ class Class_StockAdjustmentHistoryApproval
             ->where('id','=',$id)
             ->update($updateData);
 
-            return $updateData;
+            return [
+                'success' => true,
+                'message' => 'Update successfuly',
+                'data' => $updateData
+            ];
         } catch (\Exception $ex) {
             # Insert Log Error
             $requestModule=[];
@@ -197,7 +235,10 @@ class Class_StockAdjustmentHistoryApproval
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 }

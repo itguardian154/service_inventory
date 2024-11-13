@@ -64,14 +64,23 @@ class Class_StockAdjustment
                 $data_->where('reff',$reff);
             }
            
-
             if($data_->exists())
             {
                 $data = $data_->get();
+                return [
+                    'success' => true,
+                    'message' => 'Get successful',
+                    'data' => $data
+                ];
             }
             else
             {
                 $data = null;
+                return [
+                    'success' => false,
+                    'message' => 'Data Not Found',
+                    'data' => $data
+                ];
             }
             return $data;
         } catch (\Exception $ex) {
@@ -86,7 +95,10 @@ class Class_StockAdjustment
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 
@@ -132,6 +144,12 @@ class Class_StockAdjustment
                 $data->years = $years; 
                 $data->reff = $reff; 
                 $data->save();
+
+                return [
+                    'success' => true,
+                    'message' => 'Insert successful',
+                    'data' => $data
+                ];
             // }
             return $data;
         } catch (\Exception $ex) {
@@ -146,7 +164,10 @@ class Class_StockAdjustment
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 
@@ -170,38 +191,17 @@ class Class_StockAdjustment
             if (isset($request['status']) && $request['status']!='' ) {$updateData['status'] = $request['status'];}
             if (isset($request['years']) && $request['years']!='' ) {$updateData['years'] = $request['years'];}
             if (isset($request['reff']) && $request['reff']!='' ) {$updateData['reff'] = $request['reff'];}
-            // if($id!='')
-            // {
-                DB::table('stock_adjustment')
-                ->where('id','=',$id)
-                ->update($updateData);
-            // }
-            // else
-            // {
-            //     // by no adjustment
-            //     $noAdjustment='';
-            //     if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
-            //     if($noAdjustment!='')
-            //     {
-            //         $requestClass = [];
-            //         $requestClass['no_adjustment'] = $noAdjustment;
-            //         $dataID = $this->show($requestClass);
-            //         foreach($dataID as $v)
-            //         {
-            //             $id = $v->id;
-            //             DB::table('stock_adjustment')
-            //             ->where('id','=',$id)
-            //             ->update($updateData);
-            //         }
-            //     }
-            //     else
-            //     {
-            //         return 'sistem tidak mengenali ID';
-            //     }      
-            // }
-            return $updateData;
+
+            DB::table('stock_adjustment')
+            ->where('id','=',$id)
+            ->update($updateData);
+            
+            return [
+                'success' => true,
+                'message' => 'Update successfuly',
+                'data' => $updateData
+            ];
         } catch (\Exception $ex) {
-      
             # Insert Log Error
             $requestModule=[];
             $requestModule['reff'] = '-';
@@ -213,7 +213,10 @@ class Class_StockAdjustment
             $classModel = new LogError();
             $result = $classModel->insertLogError($requestModule);
             # End Log Error
-            return $ex;
+            return [
+                'success' => false,
+                'message' => $ex->getMessage()
+            ];
         }
     }
 }
