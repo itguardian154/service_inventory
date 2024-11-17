@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Service_Stock;
 use App\Http\Controllers\Service_StockAdjustment;
+use App\Http\Controllers\Service_StockGoodsReturn;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,5 +40,15 @@ Route::controller(Service_StockAdjustment::class)->group(function () {
     // Export
     Route::get('export_stock_adjustment', 'exportStockAdjustment');
 });
+
+Route::controller(Service_StockGoodsReturn::class)->group(function () {
+    Route::get('get_stock_goods_return', 'getStockGoodsReturn');
+    Route::post('insert_stock_goods_return', 'insertStockGoodsReturn');
+    Route::post('update_stock_goods_return', 'updateStockGoodsReturn');
+
+    // Export
+    Route::get('export_stock_goods_return', 'exportStockGoodsReturn');
+});
+
 
 # END STOCK

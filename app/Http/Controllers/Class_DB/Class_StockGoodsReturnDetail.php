@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers\Class_DB;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Log\LogError;
-use App\Models\stock_adjustment_detail;
-use Carbon\Carbon;
-use DateTime;
 
-class Class_StockAdjustmentDetail
+class Class_StockGoodsReturnDetail extends Controller
 {
-    /**
+     /**
      * Read table
      */ 
     public function show($request)

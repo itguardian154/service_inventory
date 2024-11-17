@@ -17,13 +17,14 @@ class Class_StockAdjustment
     public function show($request)
     {
         // set value variable
-        $noAdjustment=''; $date=''; $totalItem=''; $totalQty=''; $totalPrice=''; $status=''; $years=''; $reff='';
+        $noAdjustment=''; $date=''; $totalItem=''; $totalQty=''; $totalPrice=''; $detailAdjustment=''; $status=''; $years=''; $reff='';
 
         if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
         if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
         if (isset($request['total_item']) && $request['total_item']!='' ) {$totalItem = $request['total_item'];}
         if (isset($request['total_qty']) && $request['total_qty']!='' ) {$totalQty = $request['total_qty'];}
         if (isset($request['total_price']) && $request['total_price']!='' ) {$totalPrice = $request['total_price'];}
+        if (isset($request['detail_adjustment']) && $request['detail_adjustment']!='' ) {$detailAdjustment = $request['detail_adjustment'];}
         if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}
         if (isset($request['years']) && $request['years']!='' ) {$years = $request['years'];}
         if (isset($request['reff']) && $request['reff']!='' ) {$reff = $request['reff'];}
@@ -50,6 +51,10 @@ class Class_StockAdjustment
             if($totalPrice!='')
             {
                 $data_->where('total_price',$totalPrice);
+            }
+            if($detailAdjustment!='')
+            {
+                $data_->where('detail_adjustment','like','%'.$detailAdjustment.'%');
             }
             if($status!='')
             {
@@ -108,13 +113,14 @@ class Class_StockAdjustment
     public function insert($request)
     {
         // set value variable
-        $noAdjustment=''; $date=''; $totalItem=''; $totalQty=''; $totalPrice=''; $status='0'; $years=''; $reff='';
+        $noAdjustment=''; $date=''; $totalItem=0; $totalQty=0; $totalPrice=0; $detailAdjustment=''; $status='0'; $years=''; $reff='';
 
         if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
         if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
         if (isset($request['total_item']) && $request['total_item']!='' ) {$totalItem = $request['total_item'];}
         if (isset($request['total_qty']) && $request['total_qty']!='' ) {$totalQty = $request['total_qty'];}
         if (isset($request['total_price']) && $request['total_price']!='' ) {$totalPrice = $request['total_price'];}
+        if (isset($request['detail_adjustment']) && $request['detail_adjustment']!='' ) {$detailAdjustment = $request['detail_adjustment'];}
         if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}
         if (isset($request['years']) && $request['years']!='' ) {$years = $request['years'];}
         if (isset($request['reff']) && $request['reff']!='' ) {$reff = $request['reff'];}
@@ -122,18 +128,19 @@ class Class_StockAdjustment
         try
         {
             // cek data
-            // $request=[];
-            // $request['id_item'] = $idItems;
-            // $request['code'] = $code;
-        
-            // $dataTransaction = $this->show($request);
-            // if(isset($dataTransaction))
-            // {
-            //     // data sudah ada
-            //     return 'double data';
-            // }
-            // else
-            // {
+            $request=[];
+            $request['no_adjustment'] = $noAdjustment;
+            $dataTransaction = $this->show($request);
+            if($dataTransaction['success'])
+            {
+                return [
+                    'success' => false,
+                    'message' => 'Double Data',
+                    'data' => $dataTransaction
+                ];
+            }
+            else
+            {
                 $data = new stock_adjustment();
                 $data->no_adjustment = $noAdjustment;
                 $data->date = $date;
@@ -150,7 +157,7 @@ class Class_StockAdjustment
                     'message' => 'Insert successful',
                     'data' => $data
                 ];
-            // }
+            }
             return $data;
         } catch (\Exception $ex) {
             # Insert Log Error
@@ -188,6 +195,7 @@ class Class_StockAdjustment
             if (isset($request['total_item']) && $request['total_item']!='' ) {$updateData['total_item'] = $request['total_item'];}
             if (isset($request['total_qty']) && $request['total_qty']!='' ) {$updateData['total_qty'] = $request['total_qty'];}
             if (isset($request['total_price']) && $request['total_price']!='' ) {$updateData['total_price'] = $request['total_price'];}
+            if (isset($request['detail_adjustment']) && $request['detail_adjustment']!='' ) {$updateData['detail_adjustment'] = $request['detail_adjustment'];}
             if (isset($request['status']) && $request['status']!='' ) {$updateData['status'] = $request['status'];}
             if (isset($request['years']) && $request['years']!='' ) {$updateData['years'] = $request['years'];}
             if (isset($request['reff']) && $request['reff']!='' ) {$updateData['reff'] = $request['reff'];}
@@ -202,6 +210,7 @@ class Class_StockAdjustment
                 'data' => $updateData
             ];
         } catch (\Exception $ex) {
+            dd($ex);
             # Insert Log Error
             $requestModule=[];
             $requestModule['reff'] = '-';

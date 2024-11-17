@@ -4,23 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Log\LogError;
-use App\Http\Controllers\Model\Stock\Stock;
-use App\Http\Controllers\Model\Stock\StockLog;
-use App\Models\stock as model_stock;
+// use App\Http\Controllers\Model\Stock\Stock;
+// use App\Http\Controllers\Model\Stock\StockLog;
+// use App\Models\stock as model_stock;
 
-use App\Exports\Export_Stock;
+// use App\Exports\Export_Stock;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use DateTime;
 
-class Service_Stock extends Controller
+class Service_StockGoodsReturn extends Controller
 {
-    public function getStock(Request $request)
+    public function getGoodsReturn(Request $request)
     {
         try
         {
-            $module = new Stock();
-            $resultModel = $module->getStock($request); 
+            $module = new StockGoodsReturn();
+            $resultModel = $module->getGoodsReturn($request); 
             
             if($resultModel['success'])
             {
@@ -44,9 +44,9 @@ class Service_Stock extends Controller
             # Insert Log Error
             $requestModule=[];
             $requestModule['reff'] = 'Service';
-            $requestModule['service'] = 'Get-Stock';
-            $requestModule['class'] = 'Service_Stock';
-            $requestModule['function'] = 'getStock';
+            $requestModule['service'] = 'Get-GoodsdReturn';
+            $requestModule['class'] = 'Service_GoodsReturn';
+            $requestModule['function'] = 'getGoodsReturn';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();
@@ -56,20 +56,20 @@ class Service_Stock extends Controller
         }  
     }
 
-    public function insertStock(Request $request)
+    public function insertGoodsReturn(Request $request)
     {
         try
         {
           
             $result = [];
-            $classModel = new Stock();
-            $resultModel = $classModel->insertStock($request); 
+            $classModel = new StockGoodsReturn();
+            $resultModel = $classModel->insertGoodsReturn($request); 
             
             if($resultModel['success'])
             {
                 $result=response()->json([
                     'status' => 'success',
-                    'message' => 'Created Transaction Items Successfuly',
+                    'message' => 'Created Transaction Goods Return Successfuly',
                     'data' => $resultModel['data']
                 ]);
             }
@@ -77,19 +77,18 @@ class Service_Stock extends Controller
             {
                 $result=response()->json([
                     'status' => 'failed',
-                    'message' => 'Error Created Transaction Items',
+                    'message' => 'Error Created Transaction Goods Return',
                     'data' => $resultModel['message']
                 ]);
             }
             return $result;
         } catch (\Exception $ex) {
-        
             # Insert Log Error
             $requestModule=[];
             $requestModule['reff'] = 'Service';
-            $requestModule['service'] = 'Insert-Stock';
-            $requestModule['class'] = 'Service_Stock';
-            $requestModule['function'] = 'InsertStock';
+            $requestModule['service'] = 'Insert-GoodsdReturn';
+            $requestModule['class'] = 'Service_GoodsReturn';
+            $requestModule['function'] = 'insertGoodsReturn';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();
@@ -139,7 +138,7 @@ class Service_Stock extends Controller
     }
 
 
-    public function updateStock(Request $request)
+    public function UpdateGoodsReturn(Request $request)
     {
         try
         {
@@ -158,7 +157,7 @@ class Service_Stock extends Controller
             
             $result=response()->json([
                 'status' => 'success',
-                'message' => 'Update Stock Successfuly',
+                'message' => 'Update Goods Return Successfuly',
                 'data' => $result
             ]);
 
@@ -167,9 +166,9 @@ class Service_Stock extends Controller
             # Insert Log Error
             $requestModule=[];
             $requestModule['reff'] = 'Service';
-            $requestModule['service'] = 'Update-Stock';
-            $requestModule['class'] = 'Service_Stock';
-            $requestModule['function'] = 'UpdateStock';
+            $requestModule['service'] = 'Update-GoodsReturn';
+            $requestModule['class'] = 'Service_GoodsReturn';
+            $requestModule['function'] = 'UpdateGoodsReturn';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();
@@ -178,5 +177,4 @@ class Service_Stock extends Controller
             return $ex;
         }  
     } 
-
 }

@@ -246,22 +246,23 @@ class Stock extends Controller
         {
             $idItem = $request['id_item'];
             $code = $request['code'];
+
             // cek stock transaction in
             $stockIn = DB::table('stock_transaction')
             ->select(DB::raw('sum(`in`) as total'))
-            ->where('code', $v->code)
+            ->where('code', $code)
             ->groupBy('code')
             ->first();
 
             // cek stock transaction Out
             $stockOut = DB::table('stock_transaction')
             ->select(DB::raw('sum(`out`) as total'))
-            ->where('code', $v->code)
+            ->where('code', $code)
             ->groupBy('code')
             ->first();
             // final_stock = initial_stock + stock_in - stock_out
             $finalStock = 0;
-            $finalStock = $initialStock + $stockIn->total - $stockOut->total;
+            $finalStock = $stockIn->total - $stockOut->total;
             // update stock
             $requestClassDB=[];
             $requestClassDB['id'] = $idItem;
@@ -271,7 +272,11 @@ class Stock extends Controller
             $classDB = new Class_Stock();
             $requestClassDB = $classDB->update($requestClassDB);
 
-            return $result;
+            return [
+                'success' => true,
+                'message' => 'Successfuly Update Stock',
+                'data' => $requestClassDB
+            ];
         } catch (\Exception $ex) {
             # Insert Log Error
             $requestModule=[];
