@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Service_Stock;
 use App\Http\Controllers\Service_StockAdjustment;
 use App\Http\Controllers\Service_StockGoodsReturn;
+use App\Http\Controllers\Service_StockExpired;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,5 +51,12 @@ Route::controller(Service_StockGoodsReturn::class)->group(function () {
     Route::get('export_stock_goods_return', 'exportStockGoodsReturn');
 });
 
+Route::controller(Service_StockExpired::class)->group(function () {
+    Route::get('get_stock_expired', 'getStockExpired');
+    Route::post('insert_stock_expired', 'insertStockExpired');
+    Route::post('update_stock_expired', 'updateStockExpired');
+    // Export
+    Route::get('export_stock_expired', 'exportStockExpired');
+});
 
 # END STOCK

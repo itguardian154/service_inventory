@@ -14,6 +14,7 @@ use App\Http\Controllers\Class_DB\Class_Stock;
 use App\Http\Controllers\Class_DB\Class_StockTransaction;
 use App\Http\Controllers\Class_DB\Class_StockAdjustment;
 use App\Http\Controllers\Class_DB\Class_StockAdjustmentDetail;
+use App\Http\Controllers\Class_DB\Class_StockExpired;
 use App\Http\Controllers\Class_DB\Class_StockAdjustmentHistoryApproval;;
 use App\Http\Controllers\Model\RoleAccess\RoleAccessManagement;
 use App\Http\Controllers\Model\Stock\StockLog;
@@ -109,6 +110,7 @@ class StockAdjustment extends Controller
             $requestModuleAdjustment['years'] = $years;
             $requestModuleAdjustment['reff'] = $reff;
             # end declare variable request adjustment
+
             $classDB = new Class_StockAdjustment();
             $resultClassDB = $classDB->insert($requestModuleAdjustment);
             if(!$resultClassDB['success'])
@@ -117,6 +119,7 @@ class StockAdjustment extends Controller
                 return $resultClassDB;
             }
             $result['insert_stockAdjustment'] = $resultClassDB['data'];
+
             # declare variable request detail
             if($detailItem !='')
             {
@@ -316,7 +319,7 @@ class StockAdjustment extends Controller
             {
                 $requestClassDB =[];
                 $requestClassDB['id'] = $idClassAdjustment;
-                $requestClassDB['status'] =  $statusApprovalAdjustment; // complete full acc
+                $requestClassDB['status'] =  '99'; // complete full acc
                 $classDB = new Class_StockAdjustment();
                 $resultClassDB = $classDB->update($requestClassDB);
                 if(!$resultClassDB['success'])
@@ -343,7 +346,6 @@ class StockAdjustment extends Controller
                     $requestClassDB['code'] = $v->code;
                     $classDB = new Class_Stock();
                     $resultClassDB = $classDB->show($requestClassDB);
-                    
                     if(!$resultClassDB['success'])
                     {
                         DB::rollBack();
@@ -398,6 +400,33 @@ class StockAdjustment extends Controller
                             return $resultModel;
                         }
                         $result['update_stock'] = $resultModel['data'];
+
+                        # insert expired
+                        $expDate='';
+                        if ($v->exp_date!='' || $v->exp_date!=null) {$expDate = $v->exp_date;}
+                        if($expDate!='')
+                        {
+                            $requestClassDB=[];
+                            $requestClassDB['no_transaction'] = $v->no_adjustment;
+                            $requestClassDB['item_group'] = $v->item_group;
+                            $requestClassDB['code'] = $v->code;
+                            $requestClassDB['item'] = $v->items;
+                            $requestClassDB['unit'] = $v->unit;
+                            $requestClassDB['stock'] = '0';
+                            $requestClassDB['qty'] = $v->qty;
+                            $requestClassDB['date_expired'] = $expDate;
+                            $requestClassDB['status'] = '1';
+                            $requestClassDB['years'] = Carbon::now()->format('Y');
+
+                            $classDB = new Class_StockExpired();
+                            $resultClassDB = $classDB->insert($requestClassDB);
+                            if(!$resultClassDB['success'])
+                            {
+                                DB::rollBack();
+                                return $resultClassDB;
+                            }
+                            $result['insert_classStockExpired'] = $resultClassDB['data'];
+                        }
                     }
                 }
              

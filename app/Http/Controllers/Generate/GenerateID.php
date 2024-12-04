@@ -27,6 +27,22 @@ class GenerateID extends Controller
         return $id;
     }
 
+    public function getIDGoodsReturn($request)
+    {
+        $count = stock_goods_return::max('id') + 1;
+        $formattedNumber = str_pad($count, 5, '0', STR_PAD_LEFT);
+        $date = Carbon::now();
+        $monthNumber = $date->month; 
+        $yearsNumber = $date->year;
+       
+        // Konversi angka bulan ke angka Romawi
+        $romanMonth = $this->convertMonthToRoman($monthNumber);
+        
+        // format number/SA-PIP/month/years
+        $id = 'RT-PIP-'.$yearsNumber.'-'.$romanMonth.'-'. $formattedNumber;
+        return $id;
+    }
+
     // function Optioanl
     private function convertMonthToRoman($monthNumber) {
         $romanNumerals = [

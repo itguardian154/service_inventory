@@ -138,7 +138,6 @@ class Service_Stock extends Controller
         }  
     }
 
-
     public function updateStock(Request $request)
     {
         try
