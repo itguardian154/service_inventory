@@ -177,5 +177,4 @@ class Service_Stock extends Controller
             return $ex;
         }  
     } 
-
 }

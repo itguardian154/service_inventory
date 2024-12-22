@@ -4,9 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Service_Stock;
+use App\Http\Controllers\Service_StockTransaction;
 use App\Http\Controllers\Service_StockAdjustment;
 use App\Http\Controllers\Service_StockGoodsReturn;
 use App\Http\Controllers\Service_StockExpired;
+
+use App\Http\Controllers\Service_ReceiveOrder;
+use App\Http\Controllers\Service_StoreRequest;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +35,15 @@ Route::controller(Service_Stock::class)->group(function () {
 
     // Export
     Route::get('export_stock', 'exportStock');
+});
+
+Route::controller(Service_StockTransaction::class)->group(function () {
+    Route::get('get_stockTransaction', 'getStockTransaction');
+    Route::post('insert_stockTransaction', 'insertStockTransaction');
+    Route::post('update_stockTransaction', 'updateStockTransaction');
+
+    // Export
+    Route::get('export_stockTransaction', 'exportStockTransaction');
 });
 
 Route::controller(Service_StockAdjustment::class)->group(function () {
@@ -58,5 +71,26 @@ Route::controller(Service_StockExpired::class)->group(function () {
     // Export
     Route::get('export_stock_expired', 'exportStockExpired');
 });
-
 # END STOCK
+
+# RECEIVE ORDER
+Route::controller(Service_ReceiveOrder::class)->group(function () {
+    Route::get('get_receive_order', 'getReceiveOrder');
+    Route::post('insert_receive_order', 'insertReceiveOrder');
+    Route::post('update_receive_order', 'updateReceiveOrder');
+
+    // Export
+    Route::get('export_receive_order', 'exportReceiveOrder');
+});
+# END RECEIVE ORDER
+
+# STORE REQUEST
+Route::controller(Service_StoreRequest::class)->group(function () {
+    Route::get('get_store_request', 'getStoreRequest');
+    Route::post('insert_store_request', 'insertStoreRequest');
+    Route::post('update_store_request', 'updateStoreRequest');
+
+    // Export
+    Route::get('export_store_request', 'exportStoreRequest');
+});
+# END STORE REQUEST

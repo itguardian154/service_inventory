@@ -27,7 +27,7 @@ class Class_Stock
         if (isset($request['description']) && $request['description']!='' ) {$description = $request['description'];}
         if (isset($request['unit']) && $request['unit']!='' ) {$unit = $request['unit'];}
         if (isset($request['have_exp']) && $request['have_exp']!='' ) {$haveExp = $request['have_exp'];}
-
+   
         try
         {
             $data_ = DB::table('stock');

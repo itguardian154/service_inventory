@@ -319,7 +319,7 @@ class StockAdjustment extends Controller
             {
                 $requestClassDB =[];
                 $requestClassDB['id'] = $idClassAdjustment;
-                $requestClassDB['status'] =  '99'; // complete full acc
+                $requestClassDB['status'] =  '11'; // complete full acc
                 $classDB = new Class_StockAdjustment();
                 $resultClassDB = $classDB->update($requestClassDB);
                 if(!$resultClassDB['success'])

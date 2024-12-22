@@ -244,8 +244,9 @@ class Stock extends Controller
     {
         try
         {
-            $idItem = $request['id_item'];
-            $code = $request['code'];
+            $idItem = ''; $code ='';
+            if (isset($request['id_item']) && $request['id_item']!='' ) {$idItem = $request['id_item'];}
+            if (isset($request['code']) && $request['code']!='' ) {$code= $request['code'];}
 
             // cek stock transaction in
             $stockIn = DB::table('stock_transaction')
