@@ -134,8 +134,8 @@ class Class_StoreRequestDetail
     public function insert($request)
     {
         // set value variable
-        $noTransaction=''; $itemGroup=''; $brand=''; $codeItem=''; $items=''; $description=''; $unit=''; $qty='';
-        $price=''; $subTotal=''; $expiredDate=''; $note=''; $years='';
+        $noTransaction=''; $itemGroup=''; $brand=''; $codeItem=''; $items=''; $description=''; $unit=''; $qty=0;
+        $price=0; $subTotal=0; $expiredDate=null; $note=''; $years=Carbon::now()->format('Y');
 
         if (isset($request['no_transaction']) && $request['no_transaction']!='' ) {$noTransaction = $request['no_transaction'];}
         if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroup = $request['item_group'];}
@@ -183,7 +183,7 @@ class Class_StoreRequestDetail
                 $data->note = $note; 
                 $data->years = $years; 
                 $data->save();
-                
+    
                 return [
                     'success' => true,
                     'message' => 'Insert successful',

@@ -135,16 +135,19 @@ class Class_ReceiveOrderHistoryApproval
     {
         // set value variable
         $noTransaction=''; $ord=''; $idRoleAccess=''; $pic=''; $idKaryawan=''; $name=''; $grade=''; $departemen=''; $signature='';
-        $status='0'; $date=''; $note=''; $years=Carbon::now()->format('Y');
+        $status='0'; $date=null; $note=''; $years=carbon::now()->format('Y');
 
         if (isset($request['no_transaction']) && $request['no_transaction']!='' ) {$noTransaction = $request['no_transaction'];}
         if (isset($request['ord']) && $request['ord']!='' ) {$ord = $request['ord'];}
         if (isset($request['id_role_access']) && $request['id_role_access']!='' ) {$idRoleAccess = $request['id_role_access'];}
         if (isset($request['pic']) && $request['pic']!='' ) {$pic = $request['pic'];}
         if (isset($request['id_karyawan']) && $request['id_karyawan']!='' ) {$idKaryawan = $request['id_karyawan'];}
-        if (isset($request['price']) && $request['price']!='' ) {$price = $request['price'];}
-        if (isset($request['sub_total']) && $request['sub_total']!='' ) {$subTotal = $request['sub_total'];}
-        if (isset($request['expired_date']) && $request['expired_date']!='' ) {$expiredDate = $request['expired_date'];}
+        if (isset($request['name']) && $request['name']!='' ) {$name = $request['name'];}
+        if (isset($request['grade']) && $request['grade']!='' ) {$grade = $request['grade'];}
+        if (isset($request['departemen']) && $request['departemen']!='' ) {$departemen = $request['departemen'];}
+        if (isset($request['signature']) && $request['signature']!='' ) {$signature = $request['signature'];}
+        if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}
+        if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
         if (isset($request['note']) && $request['note']!='' ) {$note = $request['note'];}
         if (isset($request['years']) && $request['years']!='' ) {$years = $request['years'];}
  
@@ -183,7 +186,7 @@ class Class_ReceiveOrderHistoryApproval
                 $data->note = $note; 
                 $data->years = $years; 
                 $data->save();
-                
+            
                 return [
                     'success' => true,
                     'message' => 'Insert successful',

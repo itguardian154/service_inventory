@@ -87,6 +87,7 @@ class Class_StoreRequest
 
             if($data_->exists())
             {
+                $data_->orderBy('id', 'desc');
                 $data = $data_->get();
                 return [
                     'success' => true,
@@ -164,6 +165,7 @@ class Class_StoreRequest
             // }
             // else
             // {
+    
                 $data = new store_request();
                 $data->no_transaction = $noTransaction;
                 $data->id_departemen = $idDepartemen;
@@ -178,7 +180,7 @@ class Class_StoreRequest
                 $data->reff = $reff; 
                 $data->years = $years; 
                 $data->save();
-                
+              
                 return [
                     'success' => true,
                     'message' => 'Insert successful',

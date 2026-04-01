@@ -69,8 +69,8 @@ class StockTransaction extends Controller
             //     'no_transaction'    => 'sometimes|nullable|string',   // Optional, can be null
             // ]);
          
-            $itemGroup=''; $brand=''; $code=''; $item=''; $description=''; $qty=''; $typeTransaction=''; $in=''; $out=''; $qty='';
-            $noTransaction=''; $date=''; $price=''; $totalPrice=''; $originOfGoods=''; $expDate=''; $remark=''; $years='';
+            $itemGroup=''; $brand=''; $code=''; $items=''; $description=''; $qty=''; $typeTransaction=''; $in=''; $out=''; $qty='';
+            $noTransaction=''; $date=carbon::now()->format('Y-m-d'); $price=''; $totalPrice=''; $originOfGoods=''; $expDate=''; $remark=''; $years='';
           
             if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroup = $request['item_group'];}
             if (isset($request['brand']) && $request['brand']!='' ) {$brand = $request['brand'];}

@@ -18,6 +18,7 @@ class Class_StockTransaction
     {
         // set value variable
         $itemGroup=''; $brand=''; $code=''; $items=''; $description=''; $typeTransaction=''; $in=''; $out=''; $noTransaction=''; $qty=''; $origionOfGoods=''; $date=''; $years='';
+        $dateStart=''; $dateEnd='';
         if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroup = $request['item_group'];}
         if (isset($request['brand']) && $request['brand']!='' ) {$brand = $request['brand'];}
         if (isset($request['code']) && $request['code']!='' ) {$code = $request['code'];}
@@ -31,6 +32,9 @@ class Class_StockTransaction
         if (isset($request['origin_of_goods']) && $request['origin_of_goods']!='' ) {$items = $request['origin_of_goods'];}
         if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
         if (isset($request['years']) && $request['years']!='' ) {$years = $request['years'];}
+        if (isset($request['date_start']) && $request['date_start']!='' ) {$dateStart = $request['date_start'];}
+        if (isset($request['date_end']) && $request['date_end']!='' ) {$dateEnd = $request['date_end'];}
+        
 
         try
         {
@@ -91,10 +95,14 @@ class Class_StockTransaction
             {
                 $data_->where('years',$years);
             }
-
-
+            if($dateStart!='')
+            {
+                $data_->whereBetween('date', [$dateStart, $dateEnd]);
+            }
+            
             if($data_->exists())
             {
+                $data_->orderBy('id', 'asc');
                 $data = $data_->get();
                 return [
                     'success' => true,
@@ -138,7 +146,7 @@ class Class_StockTransaction
     {
         // set value variable
         $itemGroup=''; $brand=''; $code=''; $items=''; $description=''; $typeTransaction=''; $in=0; $out=0; $noTransaction=''; $qty=0; $origionOfGoods=''; $date=''; $years='';
-        
+
         if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroup = $request['item_group'];}
         if (isset($request['brand']) && $request['brand']!='' ) {$brand = $request['brand'];}
         if (isset($request['code']) && $request['code']!='' ) {$code = $request['code'];}
@@ -152,22 +160,27 @@ class Class_StockTransaction
         if (isset($request['origin_of_goods']) && $request['origin_of_goods']!='' ) {$origionOfGoods = $request['origin_of_goods'];}
         if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
         if (isset($request['years']) && $request['years']!='' ) {$years = $request['years'];}
-        
+
         try
         {
             // cek data
-            // $request=[];
-            // $request['id_item'] = $idItems;
-            // $request['code'] = $code;
+            $request=[];
+            $request['type_transaction'] = $typeTransaction;
+            $request['no_transaction'] = $noTransaction;
+            $request['code'] = $code;
+            $request['qty'] = $qty;
         
-            // $dataTransaction = $this->show($request);
-            // if(isset($dataTransaction))
-            // {
-            //     // data sudah ada
-            //     return 'double data';
-            // }
-            // else
-            // {
+            $dataTransaction = $this->show($request);
+            if($dataTransaction['success'])
+            {
+                return [
+                    'success' => false,
+                    'message' => 'Double Data',
+                    'data' => $dataTransaction
+                ];
+            }
+            else
+            {
                 $data = new stock_transaction();
                 $data->item_group = $itemGroup;
                 $data->brand = $brand;
@@ -189,7 +202,7 @@ class Class_StockTransaction
                     'message' => 'Insert successful',
                     'data' => $data
                 ];
-            // }
+            }
 
         } catch (\Exception $ex) {
             # Insert Log Error

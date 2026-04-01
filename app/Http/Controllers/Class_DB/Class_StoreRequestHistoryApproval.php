@@ -135,7 +135,7 @@ class Class_StoreRequestHistoryApproval
     {
         // set value variable
         $noTransaction=''; $ord=''; $idRoleAccess=''; $pic=''; $idKaryawan=''; $name=''; $grade=''; $departemen='';
-        $signature=''; $status=''; $date=''; $note=''; $years='';
+        $signature=''; $status='0'; $date=''; $note=''; $years='';
 
         if (isset($request['no_transaction']) && $request['no_transaction']!='' ) {$noTransaction = $request['no_transaction'];}
         if (isset($request['ord']) && $request['ord']!='' ) {$ord = $request['ord'];}

@@ -114,7 +114,8 @@ class Class_StockAdjustmentHistoryApproval
     public function insert($request)
     {
         // set value variable
-        $noAdjustment='-'; $ord='0'; $idRoleAccess=''; $pic='-';$idKaryawan='-'; $name='-'; $grade='-'; $departemen='-'; $signature='-'; $status='0'; $years='-';
+        $noAdjustment='-'; $ord='0'; $idRoleAccess=''; $pic='-';$idKaryawan='-'; $name='-'; 
+        $grade='-'; $departemen='-'; $signature='-'; $status='0'; $date=null; $note=''; $years='-';
 
         if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
         if (isset($request['ord']) && $request['ord']!='' ) {$ord = $request['ord'];}
@@ -126,6 +127,8 @@ class Class_StockAdjustmentHistoryApproval
         if (isset($request['departemen']) && $request['departemen']!='' ) {$departemen = $request['departemen'];}
         if (isset($request['signature']) && $request['signature']!='' ) {$signature = $request['signature'];}
         if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}
+        if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
+        if (isset($request['note']) && $request['note']!='' ) {$note = $request['note'];}
         if (isset($request['years']) && $request['years']!='' ) {$years = $request['years'];}
 
         
@@ -160,6 +163,8 @@ class Class_StockAdjustmentHistoryApproval
                 $data->departemen = $departemen; 
                 $data->signature = $signature; 
                 $data->status = $status; 
+                $data->date = $date; 
+                $data->note = $note; 
                 $data->years = $years; 
                 $data->save();
 

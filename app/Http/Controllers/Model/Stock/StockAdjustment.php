@@ -9,6 +9,7 @@ use Carbon\Carbon;
 
 use App\Http\Controllers\Log\LogError;
 use App\Http\Controllers\Generate\GenerateID;
+use App\Http\Controllers\API\API_Service;
 
 use App\Http\Controllers\Class_DB\Class_Stock;
 use App\Http\Controllers\Class_DB\Class_StockTransaction;
@@ -91,7 +92,7 @@ class StockAdjustment extends Controller
         
             // declare variable 
             $date=carbon::now()->format('Y-m-d'); 
-            $totalItem=0; $totalQty=0; $totalPrice=0; $status='0'; $years=carbon::now()->format('Y'); $reff='-'; $detailItem='';
+            $totalItem=0; $totalQty=0; $totalPrice=0; $status='1'; $years=carbon::now()->format('Y'); $reff='-'; $detailItem='';
             $result=[];
             # declare variable from request
             if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
@@ -146,6 +147,7 @@ class StockAdjustment extends Controller
             $classRoleAccess = new RoleAccessManagement();
             $resultRoleAccess = $classRoleAccess->getRoleAccess($requestRoleAccess);
           
+            $_first=true;
             foreach($resultRoleAccess['data']['get_roleAccessDetail'] as $v)
             {
                 $requestClassDB=[];
@@ -155,6 +157,50 @@ class StockAdjustment extends Controller
                 $requestClassDB['pic']=$v->pic;
                 $requestClassDB['grade']=$v->grade;
                 $requestClassDB['departemen']=$v->departemen;
+                if($_first==true)
+                {
+                    // Memisahkan input ke variabel
+                    $idKaryawan=''; $name =''; $grade=''; $departemen='';
+                    list($name, $departemen, $grade) = explode(' - ', $reff);
+                    # get role access
+                    $requestClassAPI =[];
+                    $requestClassAPI['id_role_access'] = $v->id_role_access;
+                    $requestClassAPI['name'] = $name;
+                    $requestClassAPI['departemen'] = $departemen;
+                    $requestClassAPI['grade'] = $grade;
+                    $classApi = new API_Service();
+                    $resultClassAPI = $classApi->getUsersAccessManagement($requestClassAPI);
+                 
+                    if($resultClassDB['success'] && $resultClassDB['data']['get_UserAccessManagement']!=null) 
+                    { 
+                       $idKaryawan=$resultClassAPI['data']['get_UserAccessManagement'][0]['id_karyawan'];
+                       $name=$resultClassAPI['data']['get_UserAccessManagement'][0]['name'];
+                       $departemen=$resultClassAPI['data']['get_UserAccessManagement'][0]['departemen'];
+                       $grade=$resultClassAPI['data']['get_UserAccessManagement'][0]['grade'];
+                    }
+                    else
+                    {
+                        $requestClassAPI=[];
+                        $requestClassAPI['name'] = $name;
+                        $requestClassAPI['departemen'] = $departemen;
+                        $requestClassAPI['grade'] = $grade;
+                        $classApi = new API_Service();
+                        $resultClassAPI = $classApi->getDataKaryawan($requestClassAPI);
+                 
+                        if($resultClassAPI['success'] && $resultClassAPI['data'][0]!=null) 
+                        {
+                            $idKaryawan=$resultClassAPI['data'][0]['id_absen'];
+                        }
+                    }
+                    $requestClassDB['id_karyawan']=$idKaryawan;
+                    $requestClassDB['name']=$name;
+                    $requestClassDB['grade']=$grade;
+                    $requestClassDB['departemen']=$departemen;
+                    $requestClassDB['status']='1';
+                    $requestClassDB['date']=Carbon::now()->format('Y-m-d H:i:s');
+                    $requestClassDB['years']=Carbon::now()->format('Y');
+                    $_first=false;
+                }
 
                 $classDB = new Class_StockAdjustmentHistoryApproval();
                 $result['insert_classAdjustmentHistoryApproval'] = $classDB->insert($requestClassDB);    
@@ -246,26 +292,13 @@ class StockAdjustment extends Controller
             }
             else
             {
-                $statusApprovalAdjustment = 0;
+                $statusApproval = 0;
                 foreach($resultClassDB['data'] as $v) // jika user mempunyai double role maka akan terupdate semua
                 {
                     $idRoleAccess = $v->id_role_access;
                     $pic = $v->pic;
-                    $statusApprovalAdjustment = $v->ord;
-                    if($status=='9') // reject
-                    {
-                        $statusApprovalAdjustment='9';
-                    }
-                    if($status=='0')
-                    {
-                        DB::table('stock_adjustment_history_approval')
-                        ->where('no_adjustment',$noAdjustment)
-                        ->update([
-                            'status' => $status,
-                        ]);
-                        $statusApprovalAdjustment='0'; // back to draft
-                    }
-               
+                    $statusApproval = $v->ord;
+                
                     // cek user access management 
                     $roleUser_ = DB::table('users_access_management')
                     ->where('id_karyawan',$idKaryawan)
@@ -290,7 +323,7 @@ class StockAdjustment extends Controller
 
                         $requestClassDB =[];
                         $requestClassDB['id'] = $idClassAdjustment;
-                        $requestClassDB['status'] =  $statusApprovalAdjustment; // 11= complete full acc;
+                        $requestClassDB['status'] =  $statusApproval; // 11= complete full acc;
                         $classDB = new Class_StockAdjustment();
                         $resultClassDB = $classDB->update($requestClassDB);
                         if(!$resultClassDB['success'])
@@ -298,13 +331,35 @@ class StockAdjustment extends Controller
                             DB::rollBack();
                             return $resultClassDB;
                         }
-                        $result['update_stockAdjustment'] = 'successfuly update No Adjustment : '.$noAdjustment.' Status : '. $statusApprovalAdjustment;
+                        $result['update_stockAdjustment'] = 'successfuly update No Adjustment : '.$noAdjustment.' Status : '. $status;
 
                     }
                     else
                     {
                         $result['status_acount'] = 'Akun ('.$idKaryawan.') Not Have Access Approval '. $v->pic .' (status : waiting '.$v->pic.')';
                         // return $result;
+                    }
+
+                    if($status!='1') // draft =0; reject =9;
+                    {
+                        $requestClassDB =[];
+                        $requestClassDB['id'] = $idClassAdjustment;
+                        $requestClassDB['status'] =  $status; // complete full acc
+                        $classDB = new Class_StockAdjustment();
+                        $resultClassDB = $classDB->update($requestClassDB);
+                        if(!$resultClassDB['success'])
+                        {
+                            DB::rollBack();
+                            return $resultClassDB;
+                        }
+                        $result['update_stockAdjustment'] = $resultClassDB['data'];
+ 
+                         DB::commit(); // break for
+                         return [
+                             'success' => true,
+                             'message' => 'Update successfuly',
+                             'data'=> $result
+                         ];
                     }
                 }
             }
@@ -476,10 +531,10 @@ class StockAdjustment extends Controller
            
             foreach($jsonDecodeDetailItem as $v)
             {
-                
+        
                 $totalItem++;
-                $totalQty = $totalQty + $v->qty;
-                $totalPrice = $totalPrice + $v->price;
+                $totalQty += $v->qty;
+                $totalPrice += $v->price * $v->qty;
                 
                 $requestModuleAdjustmentDetail=[];
                 $requestModuleAdjustmentDetail['no_adjustment'] = $noAdjustment;
@@ -492,6 +547,7 @@ class StockAdjustment extends Controller
                 $requestModuleAdjustmentDetail['qty'] = $v->qty;
                 $requestModuleAdjustmentDetail['unit'] = $v->unit;
                 $requestModuleAdjustmentDetail['price'] = $v->price;
+                $requestModuleAdjustmentDetail['total_price'] = $v->price * $v->qty;
                 $requestModuleAdjustmentDetail['exp_date'] = $v->exp_date;
                 $requestModuleAdjustmentDetail['remark'] = $v->remark;
                 $requestModuleAdjustmentDetail['years'] = Carbon::now()->format('Y');
@@ -525,7 +581,7 @@ class StockAdjustment extends Controller
                 'data' => $result
             ];
         } catch (\Exception $ex) {
-         
+            dd($ex);
             # Insert Log Error
             $requestModule=[];
             $requestModule['reff'] = '-';

@@ -43,11 +43,6 @@ class GenerateID extends Controller
 
     public function getIDGoodsReturn($request)
     {
-        // $count = stock_goods_return::max('id') + 1;
-        // $formattedNumber = str_pad($count, 5, '0', STR_PAD_LEFT);
-        // $date = Carbon::now();
-        // $monthNumber = $date->month; 
-        // $yearsNumber = $date->year;
         $date = Carbon::now();
         $monthNumber = $date->month; 
         $yearsNumber = $date->year;

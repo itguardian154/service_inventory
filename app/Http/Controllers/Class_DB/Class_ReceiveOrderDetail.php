@@ -119,11 +119,12 @@ class Class_ReceiveOrderDetail
     public function insert($request)
     {
         // set value variable
-        $noTransaction=''; $codeItem=''; $description=''; $unit=''; $qty=0; $price=0; $subTotal=0; $expiredDate=''; $note='';
+        $noTransaction=''; $codeItem=''; $description='';$items=''; $unit=''; $qty=0; $price=0; $subTotal=0; $expiredDate=null; $note='';
         $years=Carbon::now()->format('Y');
 
         if (isset($request['no_transaction']) && $request['no_transaction']!='' ) {$noTransaction = $request['no_transaction'];}
         if (isset($request['code_item']) && $request['code_item']!='' ) {$codeItem = $request['code_item'];}
+        if (isset($request['items']) && $request['items']!='' ) {$items = $request['items'];}
         if (isset($request['description']) && $request['description']!='' ) {$description = $request['description'];}
         if (isset($request['unit']) && $request['unit']!='' ) {$unit = $request['unit'];}
         if (isset($request['qty']) && $request['qty']!='' ) {$qty = $request['qty'];}
@@ -154,6 +155,7 @@ class Class_ReceiveOrderDetail
                 $data = new receive_order_detail();
                 $data->no_transaction = $noTransaction;
                 $data->code_item = $codeItem;
+                $data->items = $items;
                 $data->description = $description; 
                 $data->unit = $unit; 
                 $data->qty = $qty; 
@@ -204,6 +206,7 @@ class Class_ReceiveOrderDetail
             if (isset($request['id']) && $request['id']!='' ) {$id = $request['id'];}
             if (isset($request['no_transaction']) && $request['no_transaction']!='' ) {$updateData['no_transaction'] = $request['no_transaction'];}
             if (isset($request['code_item']) && $request['code_item']!='' ) {$updateData['code_item'] = $request['code_item'];}
+            if (isset($request['items']) && $request['items']!='' ) {$updateData['items'] = $request['items'];}
             if (isset($request['description']) && $request['description']!='' ) {$updateData['description'] = $request['description'];}
             if (isset($request['unit']) && $request['unit']!='' ) {$updateData['unit'] = $request['unit'];}
             if (isset($request['qty']) && $request['qty']!='' ) {$updateData['qty'] = $request['qty'];}

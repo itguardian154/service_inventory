@@ -2,21 +2,25 @@
 
 namespace App\Http\Controllers\Class_DB;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Log\LogError;
+use App\Models\stock_goods_return_detail;
+use Carbon\Carbon;
+use DateTime;
 
-class Class_StockGoodsReturnDetail extends Controller
+class Class_StockGoodsReturnDetail
 {
-     /**
+    /**
      * Read table
      */ 
     public function show($request)
     {
         // set value variable
-        $noAdjustment=''; $itemGroup=''; $brand=''; $code=''; $items=''; $description=''; $typeTransaction=''; 
+        $noReceive=''; $itemGroup=''; $brand=''; $code=''; $items=''; $description=''; $typeTransaction=''; 
         $qty=''; $unit=''; $price=''; $totalPrice=''; $expDate=''; $remark=''; $years=''; $reff='';
 
-        if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
+        if (isset($request['no_receive']) && $request['no_receive']!='' ) {$noReceive = $request['no_receive'];}
         if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroup = $request['item_group'];}
         if (isset($request['brand']) && $request['brand']!='' ) {$brand = $request['brand'];}
         if (isset($request['code']) && $request['code']!='' ) {$code = $request['code'];}
@@ -34,10 +38,10 @@ class Class_StockGoodsReturnDetail extends Controller
 
         try
         {
-            $data_ = DB::table('stock_adjustment_detail');
-            if($noAdjustment!='')
+            $data_ = DB::table('stock_goods_return_detail');
+            if($noReceive!='')
             {
-                $data_->where('no_adjustment',$noAdjustment);
+                $data_->where('no_receive',$noReceive);
             }
             if($itemGroup!='')
             {
@@ -120,7 +124,7 @@ class Class_StockGoodsReturnDetail extends Controller
             $requestModule=[];
             $requestModule['reff'] = '-';
             $requestModule['service'] = 'Class';
-            $requestModule['class'] = 'Class_StockAdjustmentDetail';
+            $requestModule['class'] = 'Class_StockGoodsReturnDetail';
             $requestModule['function'] = 'Show';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
@@ -140,10 +144,10 @@ class Class_StockGoodsReturnDetail extends Controller
     public function insert($request)
     {
         // set value variable
-        $noAdjustment=null; $itemGroup='-'; $brand='-'; $code='-'; $items='-'; $description='-'; 
+        $noReceive=null; $itemGroup='-'; $brand='-'; $code='-'; $items='-'; $description='-'; 
         $typeTransaction='-'; $qty=0; $unit='-'; $price=0; $totalPrice=0; $expDate=null; $remark='-'; $years=null; $reff=null;
 
-        if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
+        if (isset($request['no_receive']) && $request['no_receive']!='' ) {$noReceive = $request['no_receive'];}
         if (isset($request['item_group']) && $request['item_group']!='' ) {$itemGroup = $request['item_group'];}
         if (isset($request['brand']) && $request['brand']!='' ) {$brand = $request['brand'];}
         if (isset($request['code']) && $request['code']!='' ) {$code = $request['code'];}
@@ -163,7 +167,7 @@ class Class_StockGoodsReturnDetail extends Controller
         {
             // cek data
             $request=[];
-            $request['no_adjustment'] = $noAdjustment;
+            $request['no_receive'] = $noReceive;
             $request['code'] = $code;
             $dataTransaction = $this->show($request);
             if($dataTransaction['success'])
@@ -176,8 +180,8 @@ class Class_StockGoodsReturnDetail extends Controller
             }
             else
             {
-                $data = new stock_adjustment_detail();
-                $data->no_adjustment = $noAdjustment;
+                $data = new stock_goods_return_detail();
+                $data->no_receive = $noReceive;
                 $data->item_group = $itemGroup;
                 $data->brand = $brand; 
                 $data->code = $code; 
@@ -206,7 +210,7 @@ class Class_StockGoodsReturnDetail extends Controller
             $requestModule=[];
             $requestModule['reff'] = '-';
             $requestModule['service'] = 'Class';
-            $requestModule['class'] = 'Class_StockAdjustmentDetail';
+            $requestModule['class'] = 'Class_StockGoodsReturnDetail';
             $requestModule['function'] = 'Insert';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
@@ -232,7 +236,7 @@ class Class_StockGoodsReturnDetail extends Controller
         {
             // declare variable set
             if (isset($request['id']) && $request['id']!='' ) {$id = $request['id'];}
-            if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$updateData['no_adjustment'] = $request['no_adjustment'];}
+            if (isset($request['no_recieve']) && $request['no_recieve']!='' ) {$updateData['no_recieve'] = $request['no_recieve'];}
             if (isset($request['item_group']) && $request['item_group']!='' ) {$updateData['item_group'] = $request['item_group'];}
             if (isset($request['brand']) && $request['brand']!='' ) {$updateData['brand'] = $request['brand'];}
             if (isset($request['code']) && $request['code']!='' ) {$updateData['code'] = $request['code'];}
@@ -248,7 +252,7 @@ class Class_StockGoodsReturnDetail extends Controller
             if (isset($request['years']) && $request['years']!='' ) {$updateData['years'] = $request['years'];}
             if (isset($request['reff']) && $request['reff']!='' ) {$updateData['reff'] = $request['reff'];}
             
-            DB::table('stock_adjustment_detail')
+            DB::table('stock_goods_return_detail')
             ->where('id','=',$id)
             ->update($updateData);
 
@@ -262,7 +266,7 @@ class Class_StockGoodsReturnDetail extends Controller
             $requestModule=[];
             $requestModule['reff'] = '-';
             $requestModule['service'] = 'Class';
-            $requestModule['class'] = 'Class_StockAdjustmentDetail';
+            $requestModule['class'] = 'Class_StockGoodsReturnDetail';
             $requestModule['function'] = 'Update';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';

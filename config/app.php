@@ -17,6 +17,10 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'apiLokaHR' => env('API_SERVICE_LOKAHR', 'API URL LokaHR'),
+    'apiInventory' => env('API_SERVICE_INVENTORY', 'API URL Inventory'),
+    'apiWhatsapp' => env('API_SERVICE_WHATSAPP', 'API URL Whatsapp'),
+    
 
     /*
     |--------------------------------------------------------------------------

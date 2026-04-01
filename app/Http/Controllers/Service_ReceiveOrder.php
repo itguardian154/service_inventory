@@ -132,4 +132,36 @@ class Service_ReceiveOrder extends Controller
             return $ex;
         }  
     } 
+
+    public function updateReceiveOrderItemDetail(Request $request)
+    {
+        try
+        {
+
+            $classModel = new ReceiveOrder();
+            $result = $classModel->updateReceiveOrderItemDetail($request); 
+
+
+            $result=response()->json([
+                'status' => 'success',
+                'message' => 'Update Receive Order Item Detail Successfuly',
+                'data' => $result
+            ]);
+
+            return $result;
+        } catch (\Exception $ex) {
+            # Insert Log Error
+            $requestModule=[];
+            $requestModule['reff'] = 'Service';
+            $requestModule['service'] = 'Update-ReceiveOrderItemDetail';
+            $requestModule['class'] = 'ReceiveOrder';
+            $requestModule['function'] = 'updateReceiveOrderItemDetail';
+            $requestModule['message'] = $ex->getMessage();
+            $requestModule['note'] = '-';
+            $classModel = new LogError();
+            $result = $classModel->insertLogError($requestModule);
+            # End Log Error
+            return $ex;
+        }  
+    } 
 }

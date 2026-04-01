@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Class_DB;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Model\LogError;
+use App\Http\Controllers\Log\LogError;
 use App\Models\stock_goods_return;
 use Carbon\Carbon;
 use DateTime;
@@ -82,7 +82,6 @@ class Class_StockGoodsReturn
                     'data' => $data
                 ];
             }
-            return $data;
         } catch (\Exception $ex) {
             # Insert Log Error
             $requestModule=[];
@@ -114,7 +113,7 @@ class Class_StockGoodsReturn
         if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
         if (isset($request['type']) && $request['type']!='' ) {$type = $request['type'];}
         if (isset($request['supplier']) && $request['supplier']!='' ) {$supplier = $request['supplier'];}
-        if (isset($request['detail_goods_return']) && $request['detail_goods_return']!='' ) {$detailG = $request['detail_goods_return'];}
+        if (isset($request['detail_goods_return']) && $request['detail_goods_return']!='' ) {$detailGoodsReturn = $request['detail_goods_return'];}
         if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}
         if (isset($request['years']) && $request['years']!='' ) {$years = $request['years'];}
         if (isset($request['reff']) && $request['reff']!='' ) {$reff = $request['reff'];}
@@ -123,7 +122,7 @@ class Class_StockGoodsReturn
         {
             // cek data
             $request=[];
-            $request['no_adjustment'] = $noAdjustment;
+            $request['no_receive'] = $noReceive;
             $dataTransaction = $this->show($request);
             if($dataTransaction['success'])
             {
@@ -139,9 +138,9 @@ class Class_StockGoodsReturn
                 $data->no_receive = $noReceive;
                 $data->date = $date;
                 $data->type = $type; 
-                $data->supplier = $itemGroup; 
-                $data->detail_goods_return = $brand; 
-                $data->status = $code; 
+                $data->supplier = $supplier; 
+                $data->detail_goods_return = $detailGoodsReturn; 
+                $data->status = $status; 
                 $data->years = $years;    
                 $data->reff = $reff; 
                 $data->save();

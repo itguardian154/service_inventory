@@ -39,8 +39,12 @@ class StockGoodsReturn extends Controller
             $result=[];
             $classModel = new Class_StockGoodsReturn();
             $resultClassDB = $classModel->show($requestModule);
+            if(!$resultClassDB['success'])
+            {
+                return $resultClassDB;
+            }
+            
             $result = $resultClassDB['data'];
-
             if (isset($request['no_receive']) && $request['no_receive']!='' )
             {
                 $result=[];
@@ -54,8 +58,11 @@ class StockGoodsReturn extends Controller
                 $resultClassDB = $classModel->show($requestModule);
                 $result['get_history'] = $resultClassDB['data'];
             }
-
-            return $result;
+            return [
+                'success' => true,
+                'message' => 'Insert successfuly',
+                'data'=> $result
+            ];
         } catch (\Exception $ex) {
             # Insert Log Error
             $requestModule=[];
@@ -81,58 +88,61 @@ class StockGoodsReturn extends Controller
             $request->validate([
                 'type'            => 'required|string',             // Required
                 'supplier'        => 'sometimes|nullable|string',   // Optional, can be null
-                'detail_item'     => 'required|string',             // Required
                 'reff'            => 'required|string',             // Required
             ]);
 
-            // generate ID Adjustment
+            // generate ID
             $requestClassID=[];
             $classID = new GenerateID();
             $noReceive = $classID->getIDGoodsReturn($requestClassID);
-        
+          
             // declare variable 
             $date=carbon::now()->format('Y-m-d'); 
-            $totalItem=0; $totalQty=0; $totalPrice=0; $status='0'; $years=carbon::now()->format('Y'); 
-            $type=''; $reff='-'; $detailItem='';
+            $totalItem=0; $totalQty=0; $totalPrice=0; $status='0'; $years=carbon::now()->format('Y'); $type=''; $reff='-'; 
+            $detailGoodsReturn='';
+            
             $result=[];
             # declare variable from request
             if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
             if (isset($request['type']) && $request['type']!='' ) {$type = $request['type'];}
             if (isset($request['reff']) && $request['reff']!='' ) {$reff = $request['reff'];}
-            if (isset($request['detail_item']) && $request['detail_item']!='' ) {$detailItem = $request['detail_item'];}
+            if (isset($request['detail_goods_return']) && $request['detail_goods_return']!='' ) {$detailGoodsReturn = $request['detail_goods_return'];}
             # end declare variable request
 
-            # declare variable request adjustment
-            $requestModuleAdjustment=[];
-            $requestModuleAdjustment['no_receive'] = $noReceive;
-            $requestModuleAdjustment['date'] = $date;
-            $requestModuleAdjustment['total_item'] = $totalItem;
-            $requestModuleAdjustment['total_qty'] = $totalQty;
-            $requestModuleAdjustment['total_price'] = $totalPrice;
-            $requestModuleAdjustment['status'] = $status;
-            $requestModuleAdjustment['years'] = $years;
-            $requestModuleAdjustment['reff'] = $reff;
+            # declare variable request
+            $requestModule=[];
+            $requestModule['no_receive'] = $noReceive;
+            $requestModule['date'] = $date;
+            $requestModule['type'] = $type;
+            $requestModule['total_item'] = $totalItem;
+            $requestModule['total_qty'] = $totalQty;
+            $requestModule['total_price'] = $totalPrice;
+            $requestModule['detail_goods_return'] = $detailGoodsReturn;
+            $requestModule['status'] = $status;
+            $requestModule['years'] = $years;
+            $requestModule['reff'] = $reff;
             # end declare variable request adjustment
+        
             $classDB = new Class_StockGoodsReturn();
-            $resultClassDB = $classDB->insert($requestModuleAdjustment);
+            $resultClassDB = $classDB->insert($requestModule);
             if(!$resultClassDB['success'])
             {
                 DB::rollBack();
                 return $resultClassDB;
             }
+      
             $result['insert_stockGoodsReturn'] = $resultClassDB['data'];
             # declare variable request detail
-            if($detailItem !='')
+            if($detailGoodsReturn !='')
             {
                 $idClassGoodsReturn = $resultClassDB['data']->id;
-
                 $requestPrivateFunction = [];
-                $requestPrivateFunction['id'] = $idClassAdjustment;
+                $requestPrivateFunction['id'] = $idClassGoodsReturn;
                 $requestPrivateFunction['no_receive'] = $noReceive;
                 $requestPrivateFunction['reff'] = $reff;
-                $requestPrivateFunction['detail_item'] = $detailItem;
+                $requestPrivateFunction['detail_item'] = $detailGoodsReturn;
                 $resultPrivateFunction = $this->updateGoodsReturnDetail($requestPrivateFunction);
-   
+           
                 if(!$resultPrivateFunction['success'])
                 {
                     DB::rollBack();
@@ -146,7 +156,7 @@ class StockGoodsReturn extends Controller
             $requestRoleAccess['id_access_management'] = 'AA-002'; // approval_goods_return
             $classRoleAccess = new RoleAccessManagement();
             $resultRoleAccess = $classRoleAccess->getRoleAccess($requestRoleAccess);
-          
+       
             foreach($resultRoleAccess['data']['get_roleAccessDetail'] as $v)
             {
                 $requestClassDB=[];
@@ -157,22 +167,33 @@ class StockGoodsReturn extends Controller
                 $requestClassDB['grade']=$v->grade;
                 $requestClassDB['departemen']=$v->departemen;
 
-                $classDB = new Class_StockAdjustmentHistoryApproval();
-                $result['insert_classAdjustmentHistoryApproval'] = $classDB->insert($requestClassDB);    
+                $classDB = new Class_StockGoodsReturnHistoryApproval();
+                $resultClassDB = $classDB->insert($requestClassDB); 
+             
+                if(!$resultClassDB['success'])
+                {
+                    DB::rollBack();
+                    return $resultClassDB;
+                }
+                $result['insert_classStockGoodsReturnHistoryApproval'] = $resultClassDB['data'];
             }
             # declare variable history approval
 
             // insert History
             $requestHistory = [];
-            $requestHistory['id_item'] = $noAdjustment;
+            $requestHistory['id_item'] = $noReceive;
             $requestHistory['reff'] = $reff;
             $requestHistory['activity'] = 'Insert StockAdjustment';
-            $requestHistory['detail_act'] = $detailItem;
+            $requestHistory['detail_act'] = $detailGoodsReturn;
             $history = new StockLog();
             $result['insert_history'] = $history->insertHistoryStock($requestHistory);
 
             DB::commit();
-            return $result;
+            return [
+                'success' => true,
+                'message' => 'Insert successfuly',
+                'data'=> $result
+            ];
         } catch (\Exception $ex) {
             DB::rollBack();
             # Insert Log Error
@@ -190,42 +211,49 @@ class StockGoodsReturn extends Controller
         }
     }
 
-    public function updateAdjustment($request)
+    public function updateGoodsReturn($request)
     {
         try
         {
             DB::beginTransaction();
             // declare variable 
-            $noAdjustment=''; $date=''; $status=''; $idKaryawan=''; $reff=''; $note=''; $detailItem='';
-            $result=[];
+            $noReceive=''; $date=''; $type=''; $supplier=''; $idKaryawan=''; $reff=''; $note=''; $detailGoodsReturn='';
+            $result=[]; $status='';
 
             # declare variable from request
-            if (isset($request['no_adjustment']) && $request['no_adjustment']!='' ) {$noAdjustment = $request['no_adjustment'];}
+            if (isset($request['no_receive']) && $request['no_receive']!='' ) {$noReceive = $request['no_receive'];}
             if (isset($request['date']) && $request['date']!='' ) {$date = $request['date'];}
+            if (isset($request['type']) && $request['type']!='' ) {$type = $request['type'];}
+            if (isset($request['supplier']) && $request['supplier']!='' ) {$supplier = $request['supplier'];}
             if (isset($request['status']) && $request['status']!='' ) {$status = $request['status'];}  
             if (isset($request['id_karyawan']) && $request['id_karyawan']!='' ) {$idKaryawan = $request['id_karyawan'];}    
             if (isset($request['reff']) && $request['reff']!='' ) {$reff = $request['reff'];}    
             if (isset($request['note']) && $request['note']!='' ) {$note = $request['note'];}    
-            if (isset($request['detail_item']) && $request['detail_item']!='' ) {$detailItem = $request['detail_item'];}
+            if (isset($request['detail_goods_return']) && $request['detail_goods_return']!='' ) {$detailGoodsReturn = $request['detail_goods_return'];}
             # end declare variable request
 
-            // get data Adjustment
+            // get data Stock Goods Return
             $requestClassDB = [];
-            $requestClassDB['no_adjustment'] = $noAdjustment;
-            $classDB = new Class_StockAdjustment();
+            $requestClassDB['no_receive'] = $noReceive;
+            $classDB = new Class_StockGoodsReturn();
             $resultClassDB = $classDB->show($requestClassDB);
             if(!$resultClassDB['success'])
             {
                 DB::rollBack();
                 return $resultClassDB;
             }
-            $idClassAdjustment = $resultClassDB['data'][0]->id;
-
+            $idClassGoodsReturn = $resultClassDB['data'][0]->id;
+         
             // edit detail
-            if($detailItem!='')
+            if($detailGoodsReturn!='')
             {
-                $request['id'] = $idClassAdjustment;
-                $result['update_StockAdjustmentDetail'] = $this->updateAdjustmentDetail($request);
+                $requestPrivateFunction=[];
+                $requestPrivateFunction['id'] = $idClassGoodsReturn;
+                $requestPrivateFunction['no_receive'] = $noReceive;
+                $requestPrivateFunction['detail_item'] = $detailGoodsReturn;
+                $requestPrivateFunction['reff'] = $reff;
+                $result['update_StockGoodsReturnDetail'] = $this->updateGoodsReturnDetail($requestPrivateFunction);
+        
             }
 
             if($status=='')
@@ -233,12 +261,12 @@ class StockGoodsReturn extends Controller
                 DB::commit();
                 return $result;
             }
-        
+         
             // cek adjustment history approve
             $requestClassDB = [];
-            $requestClassDB['no_adjustment'] = $noAdjustment;
+            $requestClassDB['no_receive'] = $noReceive;
             $requestClassDB['status'] = '0'; // belum di approve
-            $classDB = new Class_StockAdjustmentHistoryApproval();
+            $classDB = new Class_StockGoodsReturnHistoryApproval();
             $resultClassDB = $classDB->show($requestClassDB);
             if(!$resultClassDB['success'])
             {
@@ -247,26 +275,26 @@ class StockGoodsReturn extends Controller
             }
             else
             {
-                $statusApprovalAdjustment = 0;
+                $statusApprovalGoodsReturn = 0;
                 foreach($resultClassDB['data'] as $v) // jika user mempunyai double role maka akan terupdate semua
                 {
                     $idRoleAccess = $v->id_role_access;
                     $pic = $v->pic;
-                    $statusApprovalAdjustment = $v->ord;
+                    $statusApprovalGoodsReturn = $v->ord;
                     if($status=='9') // reject
                     {
-                        $statusApprovalAdjustment='9';
+                        $statusApprovalGoodsReturn='9';
                     }
                     if($status=='0')
                     {
-                        DB::table('stock_adjustment_history_approval')
+                        DB::table('stock_goodss_return_history_approval')
                         ->where('no_adjustment',$noAdjustment)
                         ->update([
                             'status' => $status,
                         ]);
-                        $statusApprovalAdjustment='0'; // back to draft
+                        $statusApprovalGoodsReturn='0'; // back to draft
                     }
-               
+             
                     // cek user access management 
                     $roleUser_ = DB::table('users_access_management')
                     ->where('id_karyawan',$idKaryawan)
@@ -275,8 +303,8 @@ class StockGoodsReturn extends Controller
                     {
                         $roleUser = $roleUser_->first();
                     
-                        DB::table('stock_adjustment_history_approval')
-                        ->where('no_adjustment',$noAdjustment)
+                        DB::table('stock_goods_return_history_approval')
+                        ->where('no_receive',$noReceive)
                         ->where('id_role_access',$idRoleAccess)
                         ->update([
                             'id_karyawan' => $roleUser->id_karyawan,
@@ -287,20 +315,20 @@ class StockGoodsReturn extends Controller
                             'years' => Carbon::now()->format('Y'),
                             'date' => carbon::now()->format('Y-m-d H:i:s')
                         ]);
-                        $result['update_approveHistory'] = 'successfuly update No Adjustment : '.$noAdjustment.' ID Role : '. $idRoleAccess;
-
+                        $result['update_approveHistory'] = 'successfuly update No Receive : '.$noReceive.' ID Role : '. $idRoleAccess;
+                     
                         $requestClassDB =[];
-                        $requestClassDB['id'] = $idClassAdjustment;
-                        $requestClassDB['status'] =  $statusApprovalAdjustment; // 11= complete full acc;
-                        $classDB = new Class_StockAdjustment();
+                        $requestClassDB['id'] = $idClassGoodsReturn;
+                        $requestClassDB['status'] =  $statusApprovalGoodsReturn; // 11= complete full acc;
+                        $classDB = new Class_StockGoodsReturn();
                         $resultClassDB = $classDB->update($requestClassDB);
+            
                         if(!$resultClassDB['success'])
                         {
                             DB::rollBack();
                             return $resultClassDB;
                         }
-                        $result['update_stockAdjustment'] = 'successfuly update No Adjustment : '.$noAdjustment.' Status : '. $statusApprovalAdjustment;
-
+                        $result['update_stockGoodsReturn'] = 'successfuly update No Receive : '.$noReceive.' Status : '. $statusApprovalGoodsReturn;
                     }
                     else
                     {
@@ -309,31 +337,31 @@ class StockGoodsReturn extends Controller
                     }
                 }
             }
-
+       
             // cek sudah complete atau belum
             $requestClassDB = [];
-            $requestClassDB['no_adjustment'] = $noAdjustment;
+            $requestClassDB['no_receive'] = $noReceive;
             $requestClassDB['status'] = '0'; // belum di approve
-            $classDB = new Class_StockAdjustmentHistoryApproval();
+            $classDB = new Class_StockGoodsReturnHistoryApproval();
             $resultClassDB = $classDB->show($requestClassDB);
             if(!$resultClassDB['success']) // complete
             {
                 $requestClassDB =[];
-                $requestClassDB['id'] = $idClassAdjustment;
-                $requestClassDB['status'] =  $statusApprovalAdjustment; // complete full acc
-                $classDB = new Class_StockAdjustment();
+                $requestClassDB['id'] = $idClassGoodsReturn;
+                $requestClassDB['status'] =  '11'; // complete full acc
+                $classDB = new Class_StockGoodsReturn();
                 $resultClassDB = $classDB->update($requestClassDB);
                 if(!$resultClassDB['success'])
                 {
                     DB::rollBack();
                     return $resultClassDB;
                 }
-                $result['update_stockAdjustment'] = $resultClassDB['data'];
+                $result['update_stockGoodsReturn'] = $resultClassDB['data'];
 
                 // update stock by adjustment
                 $requestClassDB=[];
-                $requestClassDB['no_adjustment'] = $noAdjustment;
-                $classDB = new Class_StockAdjustmentDetail();
+                $requestClassDB['no_receive'] = $noReceive;
+                $classDB = new Class_StockGoodsReturnDetail();
                 $resultClassDB = $classDB->show($requestClassDB);
                 if(!$resultClassDB['success'])
                 {
@@ -376,9 +404,9 @@ class StockGoodsReturn extends Controller
                         {
                             $requestClassDB['out'] = $v->qty;
                         }
-                        $requestClassDB['no_transaction'] = $v->no_adjustment;
+                        $requestClassDB['no_transaction'] = $v->no_receive;
                         $requestClassDB['qty'] = $v->qty;
-                        $requestClassDB['origin_of_goods'] = 'Adjustment';
+                        $requestClassDB['origin_of_goods'] = 'Goods Return';
                         $requestClassDB['date'] = Carbon::now()->format('Y-m-d');
                         $requestClassDB['years'] = Carbon::now()->format('Y');
                         $classDB = new Class_StockTransaction();
@@ -410,7 +438,7 @@ class StockGoodsReturn extends Controller
             {
                 $result['status_approval'] = 'Approval Adjustment not Completed';
             }
-        
+
             DB::commit();
             return $result;
         } catch (\Exception $ex) {
@@ -419,8 +447,8 @@ class StockGoodsReturn extends Controller
             $requestModule=[];
             $requestModule['reff'] = '-';
             $requestModule['service'] = 'Model';
-            $requestModule['class'] = 'StockAdjustment';
-            $requestModule['function'] = 'updateAdjustment';
+            $requestModule['class'] = 'StockGoodsReturn';
+            $requestModule['function'] = 'updateGoodsReturn';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();
@@ -431,12 +459,12 @@ class StockGoodsReturn extends Controller
     }
 
     // private function ------------------------------------
-    private function updateAdjustmentDetail($request)
+    private function updateGoodsReturnDetail($request)
     {
         try
         {
             $id = $request['id'];
-            $noAdjustment = $request['no_adjustment'];
+            $noReceive = $request['no_receive'];
             $reff = $request['reff'];
             $detailItem = $request['detail_item'];
             $jsonDecodeDetailItem = json_decode($detailItem);
@@ -445,68 +473,67 @@ class StockGoodsReturn extends Controller
             $totalQty =0; $totalPrice=0; $totalItem=0;
             
             // delete from table stock_adjustment_detail
-            DB::table('stock_adjustment_detail')
-            ->where('no_adjustment',$noAdjustment)
+            DB::table('stock_goods_return_detail')
+            ->where('no_receive',$noReceive)
             ->delete();
-           
+         
             foreach($jsonDecodeDetailItem as $v)
             {
                 
                 $totalItem++;
-                $totalQty = $totalQty + $v->qty;
-                $totalPrice = $totalPrice + $v->price;
+                $totalQty += $v->qty;
+                $totalPrice += ($v->price * $v->qty);
                 
-                $requestModuleAdjustmentDetail=[];
-                $requestModuleAdjustmentDetail['no_adjustment'] = $noAdjustment;
-                $requestModuleAdjustmentDetail['item_group'] = $v->item_group;
-                $requestModuleAdjustmentDetail['brand'] =  $v->brand;
-                $requestModuleAdjustmentDetail['code'] = $v->code;
-                $requestModuleAdjustmentDetail['items'] =  $v->items;
-                $requestModuleAdjustmentDetail['description'] = $v->description;
-                $requestModuleAdjustmentDetail['type_transaction'] = $v->type_transaction;
-                $requestModuleAdjustmentDetail['qty'] = $v->qty;
-                $requestModuleAdjustmentDetail['unit'] = $v->unit;
-                $requestModuleAdjustmentDetail['price'] = $v->price;
-                $requestModuleAdjustmentDetail['exp_date'] = $v->exp_date;
-                $requestModuleAdjustmentDetail['remark'] = $v->remark;
-                $requestModuleAdjustmentDetail['years'] = Carbon::now()->format('Y');
-                $requestModuleAdjustmentDetail['reff'] = $reff;
+                $requestModule=[];
+                $requestModule['no_receive'] = $noReceive;
+                $requestModule['item_group'] = $v->item_group;
+                $requestModule['brand'] =  $v->brand;
+                $requestModule['code'] = $v->code;
+                $requestModule['items'] =  $v->items;
+                $requestModule['description'] = $v->description;
+                $requestModule['type_transaction'] = '2'; // 1=in; 2=out;
+                $requestModule['qty'] = $v->qty;
+                $requestModule['unit'] = $v->unit;
+                $requestModule['price'] = $v->price;
+                $requestModule['total_price'] = ($v->price * $v->qty); 
+                $requestModule['exp_date'] = $v->exp_date;
+                $requestModule['remark'] = $v->remark;
+                $requestModule['years'] = Carbon::now()->format('Y');
+                $requestModule['reff'] = $reff;
             
                 # end declare variable request detail
-                $classDB = new Class_StockAdjustmentDetail();
-                $resultClassDB = $classDB->insert($requestModuleAdjustmentDetail);    
-             
+                $classDB = new Class_StockGoodsReturnDetail();
+                $resultClassDB = $classDB->insert($requestModule);    
+              
                 if(!$resultClassDB['success'])
                 {
-                    DB::rollBack();
                     return $resultClassDB;
                 }
-                $result['insert_classAdjustmentDetail'] = $resultClassDB['data'];
+                $result['insert_classGoodsReturnDetail'] = $resultClassDB['data'];
             }
-    
-            // update master adjustment 
-            $requestModuleAdjustment=[];
-            $requestModuleAdjustment['id'] = $id;
-            $requestModuleAdjustment['total_item'] = $totalItem;
-            $requestModuleAdjustment['total_qty'] = $totalQty;
-            $requestModuleAdjustment['total_price'] = $totalPrice;
-            $requestModuleAdjustment['detail_adjustment'] = $detailItem;
-            $classModel = new Class_StockAdjustment();
-            $result['update_classAdjustment'] = $classModel->update($requestModuleAdjustment);
+       
+            // update master 
+            $requestModule=[];
+            $requestModule['id'] = $id;
+            $requestModule['total_item'] = $totalItem;
+            // $requestModule['total_qty'] = $totalQty;
+            $requestModule['total_price'] = $totalPrice;
+            $requestModule['detail_goods_return'] = $detailItem;
+            $classModel = new Class_StockGoodsReturn();
+            $result['update_classStockGoodsReturn'] = $classModel->update($requestModule);
 
             return [
                 'success' => true,
-                'message' => 'Update Detail Stock Adjustment successful',
+                'message' => 'Update Detail Stock Goods Return successful',
                 'data' => $result
             ];
-        } catch (\Exception $ex) {
-         
+        } catch (\Exception $ex) {         
             # Insert Log Error
             $requestModule=[];
             $requestModule['reff'] = '-';
             $requestModule['service'] = 'Model';
-            $requestModule['class'] = 'StockAdjustment';
-            $requestModule['function'] = 'updateAdjustmentDetail';
+            $requestModule['class'] = 'StockGoodsReturn';
+            $requestModule['function'] = 'updateGoodsReturnDetail';
             $requestModule['message'] = $ex->getMessage();
             $requestModule['note'] = '-';
             $classModel = new LogError();

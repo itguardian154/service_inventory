@@ -12,6 +12,11 @@ use App\Http\Controllers\Service_StockExpired;
 use App\Http\Controllers\Service_ReceiveOrder;
 use App\Http\Controllers\Service_StoreRequest;
 
+use App\Http\Controllers\Service_RoleAccess;
+use App\Http\Controllers\Service_UserAccessManagement;
+
+use App\Http\Controllers\UpdateStockDataController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,10 +36,12 @@ use App\Http\Controllers\Service_StoreRequest;
 Route::controller(Service_Stock::class)->group(function () {
     Route::get('get_stock', 'getStock');
     Route::post('insert_stock', 'insertStock');
+    Route::post('insert_stock_db', 'insertStockDB');
     Route::post('update_stock', 'updateStock');
 
     // Export
     Route::get('export_stock', 'exportStock');
+    Route::get('export_inventory_valuation_report', 'exportInventoryValuationReport');
 });
 
 Route::controller(Service_StockTransaction::class)->group(function () {
@@ -78,6 +85,7 @@ Route::controller(Service_ReceiveOrder::class)->group(function () {
     Route::get('get_receive_order', 'getReceiveOrder');
     Route::post('insert_receive_order', 'insertReceiveOrder');
     Route::post('update_receive_order', 'updateReceiveOrder');
+    Route::post('update_receive_order_item_detail', 'updateReceiveOrderItemDetail');
 
     // Export
     Route::get('export_receive_order', 'exportReceiveOrder');
@@ -89,8 +97,26 @@ Route::controller(Service_StoreRequest::class)->group(function () {
     Route::get('get_store_request', 'getStoreRequest');
     Route::post('insert_store_request', 'insertStoreRequest');
     Route::post('update_store_request', 'updateStoreRequest');
-
+    Route::post('update_distribution_status', 'updateDistributionStatus');
     // Export
     Route::get('export_store_request', 'exportStoreRequest');
 });
 # END STORE REQUEST
+
+# ROLE ACCESS
+Route::controller(Service_RoleAccess::class)->group(function () {
+    Route::get('get_role_access', 'getRoleAccess');
+});
+# END ROLE ACCESS
+
+# USERS ACCESS MANAGEMENT
+Route::controller(Service_UserAccessManagement::class)->group(function () {
+    Route::get('get_user_access_management', 'userAccessManagement');
+});
+# END USERS ACCESS MANAGEMENT
+
+
+# UPDATE STOCK From Gsheet
+Route::controller(UpdateStockDataController::class)->group(function () {
+    Route::post('update-stock-name', 'updateStock');
+});
