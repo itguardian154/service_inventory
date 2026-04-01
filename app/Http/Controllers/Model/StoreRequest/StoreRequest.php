@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Log\LogError;
 use App\Http\Controllers\Generate\GenerateID;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Whatsapp\SentMessage;
+use App\Http\Controllers\API\API_Service;
 
 use App\Http\Controllers\Model\Stock\Stock;
 use App\Http\Controllers\Model\Stock\StockTransaction;
@@ -573,80 +575,60 @@ class StoreRequest
                    return $resultClassDB;
                }
                $result['update_StoreRequest'] = $resultClassDB['data'];
-
-            //    // update stock by adjustment
-            //    $requestClassDB=[];
-            //    $requestClassDB['no_transaction'] = $noTransaction;
-            //    $classDB = new Class_StoreRequestDetail();
-            //    $resultClassDB = $classDB->show($requestClassDB);
-            //    if(!$resultClassDB['success'])
-            //    {
-            //        DB::rollBack();
-            //        return $resultClassDB;
-            //    }
-            //    foreach($resultClassDB['data'] as $v)
-            //    {
-            //        // find id item
-            //        $requestClassDB =[];
-            //        $requestClassDB['code'] = $v->code_item;
-            //        $classDB = new Class_Stock();
-            //        $resultClassDB = $classDB->show($requestClassDB);
-                   
-            //        if(!$resultClassDB['success'])
-            //        {
-            //            DB::rollBack();
-            //            return 'Code Item '. $v->code_item.' Tidak Ditemukan';
-            //        }
-            //        else
-            //        {   
-            //            $idItem = $resultClassDB['data'][0]->id;
-                        
-                    // insert stock transaction
-                    //    $requestClassDB = [];
-                    //    $requestClassDB['id_item'] = $idItem;
-                    //    $requestClassDB['item_group'] = $v->item_group;
-                    //    $requestClassDB['brand'] =$v->brand;
-                    //    $requestClassDB['code'] = $v->code_item;
-                    //    $requestClassDB['items'] = $v->items;
-                    //    $requestClassDB['description'] = $v->description;
-                    //    $requestClassDB['type_transaction'] = '2';
-                    //    $requestClassDB['in'] = 0;
-                    //    $requestClassDB['out'] = $v->qty;
-                    //    $requestClassDB['no_transaction'] = $v->no_transaction;
-                    //    $requestClassDB['qty'] = $v->qty;
-                    //    $requestClassDB['price'] = $v->price;
-                    //    $requestClassDB['total_price'] = $v->sub_total;
-                    //    $requestClassDB['exp_date'] = $v->expired_date;
-                    //    $requestClassDB['origin_of_goods'] = 'Store Request';
-                    //    $requestClassDB['date'] = Carbon::now()->format('Y-m-d');
-                    //    $requestClassDB['years'] = Carbon::now()->format('Y');
-                    //    $classDB = new Class_StockTransaction();
-                    //    $resultClassDB = $classDB->insert($requestClassDB);
-                    //    if(!$resultClassDB['success'])
-                    //    {
-                    //        DB::rollBack();
-                    //        return $resultClassDB;
-                    //    }
-                    //    $result['insert_stockTransaction'] = $resultClassDB['data'];
-
-                    //    $requestClassModel = [];
-                    //    $requestClassModel['id_item'] = $idItem;
-                    //    $requestClassModel['code'] = $v->code_item;
-                    //    $classModel = new Stock();
-                    //    $resultModel = $classModel->updateStockFromTransaction($requestClassModel);
-                     
-                    //    if(!$resultModel['success'])
-                    //    {
-                    //        DB::rollBack();
-                    //        return $resultModel;
-                    //    }
-                    //    $result['update_stock'] = $resultModel['data'];
-                //    }
-            //    }
            }
            else
            {
                $result['status_approval'] = 'Approval Receive Order not Completed (waiting '. $pic.')';
+
+                $idRoleAccess = $resultClassDB['data'][0]->id_role_access; 
+                $pic = $resultClassDB['data'][0]->pic;
+                $dateTransacion = $resultClassDB['data'][0]->created_at;
+                // sent to WA Message
+                $requestClassDB=[];
+                $requestClassDB['id_role_access'] = '006';
+                $requestClassDB['departemen'] = 'Finance & Accounting';
+                $requestClassDB['grade'] = 'SPV';
+                
+                $classApi = new API_Service();
+                $resultClassDB = $classApi->getUsersAccessManagement($requestClassDB);
+                
+                if($resultClassDB['success'])
+                {
+                    $userAccessManagement = $resultClassDB['data']['get_UserAccessManagement'];
+                    $count = 0;
+                    foreach($userAccessManagement as $v)
+                    {
+                        if ($count >= 3) {
+                            break; // stop setelah 5 kali loop
+                        }
+                        $requestClassAPI=[];
+                        $requestClassAPI['id_karyawan'] = $v['id_karyawan'];
+                        $classApi = new API_Service();
+                        $resultClassAPI = $classApi->getDataKaryawan($requestClassAPI);
+                        if($resultClassAPI['success'] && $resultClassAPI['data'][0]!=null) 
+                        {
+                            $statusKaryawan=$resultClassAPI['data'][0]['status'];
+                            if($statusKaryawan=='1')
+                            {
+                                // sent Message
+                                $name = $resultClassAPI['data'][0]['name'];
+                                $idKaryawan = $resultClassAPI['data'][0]['id_absen'];
+                                $telephone = $resultClassAPI['data'][0]['no_hp'];
+                            
+                                $requestWA=[];
+                                $requestWA['type'] = 'receive_order';
+                                $requestWA['name'] = $name;
+                                $requestWA['no_transaction'] = $noTransaction;
+                                $requestWA['date_transaction'] = $dateTransacion;
+                                $requestWA['telephone'] = $telephone;
+                                    
+                                $classWhatsapp = new SentMessage();
+                                $resultclassWA = $classWhatsapp->sentWhatsappRequest($requestWA);
+                                $result['status_sentWhatsapp'] = $resultclassWA;
+                            }
+                        }
+                    }
+                }
            }
            
            DB::commit();
