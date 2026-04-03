@@ -157,13 +157,14 @@ class API_Service
     public function sentWhatsapp($request)
     {
         $recipientPhone = $request['recipient_phone'] ?? ($request['telephone'] ?? '');
+        $recipientPhone = '085941304991'; // HARDCODE UNTUK SEMENTARA
         $message        = $request['message'] ?? '';
         $recipientName  = $request['recipient_name'] ?? ($request['name'] ?? '');
         $title          = $request['title'] ?? 'Notification';
 
         $payload = [
             'master_module_id' => $request['master_module_id'] ?? 8,
-            'master_menu_id'   => $request['master_menu_id'] ?? 12,
+            'master_menu_id'   => $request['master_menu_id'] ?? 11,
             'recipient_name'   => $recipientName,
             'recipient_phone'  => $recipientPhone,
             'type'             => $request['type'] ?? 'text', // text, image, pdf
@@ -171,7 +172,7 @@ class API_Service
             'message'          => $message,
             'assets'           => $request['assets'] ?? null,
             'asset_name'       => $request['asset_name'] ?? null,
-            'delay'            => $request['delay'] ?? 0,
+            'delay'            => $request['delay'] ?? 1,
         ];
 
         if (empty($payload['recipient_phone'])) {

@@ -63,9 +63,9 @@ class SentMessage
         "Dear Bapak/Ibu *".$name."* \n".
         "Request Store Request sudah dibuat dengan data sebagai berikut:"." \n\n".
         "Nomor : \n*".$noTransaction."* \n".
-        "Departemen : *".$departemen."* \n".
-        "Sub Departemen : *".$subDepartemen."* \n".
-        "Tanggal Pengajuan : *".$dateTransaction."* \n";
+        // "Departemen : *".$departemen."* \n".
+        // "Sub Departemen : *".$subDepartemen."* \n".
+        "Tanggal Pengajuan : \n*".$dateTransaction."* \n";
         return $message;
     }
     # End Body
@@ -78,6 +78,8 @@ class SentMessage
             $type=''; $telephone='';
             if (isset($request['telephone']) && $request['telephone']!='') {$telephone = $request['telephone'];}
             if (isset($request['type']) && $request['type']!='') {$type = $request['type'];}
+            if (isset($request['name']) && $request['name']!='') {$name = $request['name'];}
+           
             if($telephone=='')
             {
                 return null;   
@@ -107,6 +109,7 @@ class SentMessage
             }
         
             $requestClassAPI = [];
+            $requestClassAPI['name'] = $name;
             $requestClassAPI['telephone'] = $telephone;
             $requestClassAPI['message'] = $message;
    

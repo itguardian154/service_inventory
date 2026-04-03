@@ -553,14 +553,14 @@ class StoreRequest
                     }
                }
            }
-    
+         
            // cek sudah complete atau belum
            $requestClassDB = [];
            $requestClassDB['no_transaction'] = $noTransaction;
            $requestClassDB['status'] = '0'; // belum di approve
            $classDB = new Class_StoreRequestHistoryApproval();
            $resultClassDB = $classDB->show($requestClassDB);
-        
+          
            if(!$resultClassDB['success']) // complete
            {
                $requestClassDB =[];
@@ -579,7 +579,7 @@ class StoreRequest
            else
            {
                $result['status_approval'] = 'Approval Receive Order not Completed (waiting '. $pic.')';
-
+           
                 $idRoleAccess = $resultClassDB['data'][0]->id_role_access; 
                 $pic = $resultClassDB['data'][0]->pic;
                 $dateTransacion = $resultClassDB['data'][0]->created_at;
@@ -591,7 +591,7 @@ class StoreRequest
                 
                 $classApi = new API_Service();
                 $resultClassDB = $classApi->getUsersAccessManagement($requestClassDB);
-                
+               
                 if($resultClassDB['success'])
                 {
                     $userAccessManagement = $resultClassDB['data']['get_UserAccessManagement'];
@@ -614,16 +614,17 @@ class StoreRequest
                                 $name = $resultClassAPI['data'][0]['name'];
                                 $idKaryawan = $resultClassAPI['data'][0]['id_absen'];
                                 $telephone = $resultClassAPI['data'][0]['no_hp'];
-                            
+                                $telephone = '085941304991'; // hardcode untuk testing  
                                 $requestWA=[];
-                                $requestWA['type'] = 'receive_order';
+                                $requestWA['type'] = 'store_request';
                                 $requestWA['name'] = $name;
                                 $requestWA['no_transaction'] = $noTransaction;
                                 $requestWA['date_transaction'] = $dateTransacion;
                                 $requestWA['telephone'] = $telephone;
-                                    
+                            
                                 $classWhatsapp = new SentMessage();
                                 $resultclassWA = $classWhatsapp->sentWhatsappRequest($requestWA);
+                                dd($resultclassWA);
                                 $result['status_sentWhatsapp'] = $resultclassWA;
                             }
                         }
