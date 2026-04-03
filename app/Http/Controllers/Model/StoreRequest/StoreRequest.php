@@ -624,7 +624,7 @@ class StoreRequest
                             
                                 $classWhatsapp = new SentMessage();
                                 $resultclassWA = $classWhatsapp->sentWhatsappRequest($requestWA);
-                                dd($resultclassWA);
+                               
                                 $result['status_sentWhatsapp'] = $resultclassWA;
                             }
                         }
