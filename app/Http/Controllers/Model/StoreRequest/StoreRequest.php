@@ -614,7 +614,7 @@ class StoreRequest
                                 $name = $resultClassAPI['data'][0]['name'];
                                 $idKaryawan = $resultClassAPI['data'][0]['id_absen'];
                                 $telephone = $resultClassAPI['data'][0]['no_hp'];
-                                $telephone = '085941304991'; // hardcode untuk testing  
+                                // $telephone = '085941304991'; // hardcode untuk testing  
                                 $requestWA=[];
                                 $requestWA['type'] = 'store_request';
                                 $requestWA['name'] = $name;
