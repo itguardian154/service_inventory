@@ -8,14 +8,12 @@ use App\Http\Controllers\Service_StockTransaction;
 use App\Http\Controllers\Service_StockAdjustment;
 use App\Http\Controllers\Service_StockGoodsReturn;
 use App\Http\Controllers\Service_StockExpired;
-
 use App\Http\Controllers\Service_ReceiveOrder;
 use App\Http\Controllers\Service_StoreRequest;
-
 use App\Http\Controllers\Service_RoleAccess;
 use App\Http\Controllers\Service_UserAccessManagement;
-
 use App\Http\Controllers\UpdateStockDataController;
+use App\Http\Controllers\Exports\ReceiveOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,3 +118,6 @@ Route::controller(Service_UserAccessManagement::class)->group(function () {
 Route::controller(UpdateStockDataController::class)->group(function () {
     Route::post('update-stock-name', 'updateStock');
 });
+
+# EXPORT
+Route::get('/receive-order/export', [ReceiveOrderController::class, 'export']);
