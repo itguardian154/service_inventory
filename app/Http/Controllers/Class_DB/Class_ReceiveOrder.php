@@ -20,7 +20,16 @@ class Class_ReceiveOrder
         $noTransaction=''; $idDepartemen=''; $departemen=''; $idSubDepartemen=''; $subDepartemen='';
         $typeTransaction=''; $dateTransaction=''; $noPo=''; $noInvoice=''; $supplier=''; $typeParent=''; $isSr='';
         $detailItem=''; $total=''; $status=''; $years='';
+        $dateFrom = '';
+        $dateTo = '';
 
+        if (isset($request['date_from']) && $request['date_from'] != '') {
+            $dateFrom = $request['date_from'];
+        }
+
+        if (isset($request['date_to']) && $request['date_to'] != '') {
+            $dateTo = $request['date_to'];
+        }
         if (isset($request['no_transaction']) && $request['no_transaction']!='' ) {$noTransaction = $request['no_transaction'];}
         if (isset($request['id_departemen']) && $request['id_departemen']!='' ) {$idDepartemen = $request['id_departemen'];}
         if (isset($request['departemen']) && $request['departemen']!='' ) {$departemen = $request['departemen'];}
@@ -41,6 +50,7 @@ class Class_ReceiveOrder
         try
         {
             $data_ = DB::table('receive_order');
+            
             if($idDepartemen!='')
             {
                 $data_->where('id_departemen',$idDepartemen);
@@ -57,9 +67,27 @@ class Class_ReceiveOrder
             {
                 $data_->where('type_transaction',$typeTransaction);
             }
+            // Filter tanggal tunggal
             if($dateTransaction!='')
             {
-                $data_->where('date_transaction',$dateTransaction);
+                $data_->whereDate('date_transaction', $dateTransaction);
+            }
+
+            // Filter range tanggal
+            if($dateFrom != '' && $dateTo != '')
+            {
+                $data_->whereBetween('date_transaction', [
+                    $dateFrom,
+                    $dateTo
+                ]);
+            }
+            elseif($dateFrom != '')
+            {
+                $data_->whereDate('date_transaction', '>=', $dateFrom);
+            }
+            elseif($dateTo != '')
+            {
+                $data_->whereDate('date_transaction', '<=', $dateTo);
             }
             if($noPo!='')
             {
