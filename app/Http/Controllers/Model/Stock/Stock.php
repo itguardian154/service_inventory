@@ -75,10 +75,16 @@ class Stock extends Controller
             $export_type = $request['export_type'] ?? 'all_stock'; // Default: have_stock
             $item_group = $request['item_group'] ?? null;
             $have_exp = $request['have_exp'] ?? null;
+            $reorder = $request['reorder'] ?? null;
+            $moving_type = $request['moving_type'] ?? null;
+            $status = $request['status'] ?? null;
 
             // Normalisasi export_type
             if ($export_type == '0') $export_type = 'all_stock';
             if ($export_type == '1') $export_type = 'have_stock';
+            if ($reorder !== null) {
+                $reorder = filter_var($reorder, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            }
 
             // 1. Ambil previous stock (before date_start)
             $prevStock = DB::table('stock_transaction')
@@ -101,22 +107,46 @@ class Stock extends Controller
 
             // 3. Ambil data stok utama
             $stockQuery = DB::table('stock')
-                ->when(!empty($code), fn($q) => $q->where('code', $code))
-                ->when($item_group, fn($q) => $q->where('item_group', $item_group))
-                ->when($have_exp !== null, fn($q) => $q->where('have_exp', $have_exp))
-                ->orderBy('items');
+            ->whereNotNull('status')
+            ->when(!empty($code), fn($q) => $q->where('code', $code))
+            ->when($item_group, fn($q) => $q->where('item_group', $item_group))
+            ->when($have_exp !== null, fn($q) => $q->where('have_exp', $have_exp))
+            ->when($moving_type, fn($q) => $q->where('moving_type', $moving_type))
+            ->when($status, fn($q) => $q->where('status', $status))
+            ->orderBy('items');
 
             // Gunakan chunk untuk menghindari overload
             $data['stock'] = collect();
-            $stockQuery->chunk(500, function ($stocks) use (&$data, $prevStock, $transactions, $export_type) {
+
+            $stockQuery->chunk(500, function ($stocks) use (
+                &$data,
+                $prevStock,
+                $transactions,
+                $export_type,
+                $reorder
+            ) {
+
                 foreach ($stocks as $item) {
+
                     $initial = $prevStock[$item->code]->initial_stock ?? 0;
                     $stock_in = $transactions[$item->code]->stock_in ?? 0;
                     $stock_out = $transactions[$item->code]->stock_out ?? 0;
+
                     $final_stock = $initial + $stock_in - $stock_out;
 
-                    // Filter jika hanya ingin yang ada stok
+                    // Filter hanya stok tersedia
                     if ($export_type === 'have_stock' && $final_stock <= 0) {
+                        continue;
+                    }
+
+                    // Filter Need Reorder
+                    if ($item->minimal_stock <= 0) {
+                        $need_reorder = false;
+                    } else {
+                        $need_reorder = $final_stock <= $item->minimal_stock;
+                    }
+
+                    if ($reorder !== null && $need_reorder !== $reorder) {
                         continue;
                     }
 
@@ -129,6 +159,13 @@ class Stock extends Controller
                         'description' => $item->description,
                         'unit' => $item->unit,
                         'have_exp' => $item->have_exp,
+
+                        'minimal_stock' => $item->minimal_stock ?? 0,
+                        'moving_type' => $item->moving_type ?? 'SLOW',
+                        'status' => $item->status ?? 'ENABLE',
+
+                        'need_reorder' => $need_reorder,
+
                         'initial_stock' => $initial,
                         'stock_in' => $stock_in,
                         'stock_out' => $stock_out,
@@ -157,104 +194,6 @@ class Stock extends Controller
         }
     }
 
-
-    // public function getStockByDate($request)
-    // {
-    //     try
-    //     {
-    //         $date_start = $request['date_start'] ?? Carbon::now()->startOfMonth();
-    //         $date_end = $request['date_end'] ?? Carbon::now()->endOfMonth();
-    //         $code = $request['code'] ?? '';
-    //         $export_type = $request['export_type'] ?? 'have_stock'; // Default: all_stock
-    //         $item_group = $request['item_group'] ?? null;
-    //         $have_exp = $request['have_exp'] ?? null;
-        
-    //         if($export_type=='0') //tidak memiliki stock
-    //         {
-    //             $export_type='all_stock';
-    //         }
-    //         if($export_type=='1') //memiliki stock
-    //         {
-    //             $export_type='have_stock';
-    //         }
-
-    //         $query = DB::table('stock')
-    //             ->leftJoin('stock_transaction as st', function ($join) use ($date_start, $date_end) {
-    //                 $join->on('stock.code', '=', 'st.code')
-    //                     ->whereBetween('st.date', [$date_start, $date_end]);
-    //             })
-    //             ->leftJoin(DB::raw("
-    //                 (SELECT 
-    //                     code, 
-    //                     SUM(`in`) - SUM(`out`) AS initial_stock
-    //                 FROM stock_transaction
-    //                 WHERE date < '$date_start'
-    //                 GROUP BY code
-    //                 ) AS prev_stock
-    //             "), 'stock.code', '=', 'prev_stock.code')
-    //             ->select([
-    //                 'stock.id', 'stock.item_group', 'stock.brand', 'stock.code', 'stock.items',
-    //                 'stock.description', 'stock.unit', 'stock.have_exp',
-    //                 DB::raw('COALESCE(prev_stock.initial_stock, 0) AS initial_stock'),
-    //                 DB::raw('COALESCE(SUM(CASE WHEN st.`in` > 0 THEN st.`in` ELSE 0 END), 0) AS stock_in'),
-    //                 DB::raw('COALESCE(SUM(CASE WHEN st.`out` > 0 THEN st.`out` ELSE 0 END), 0) AS stock_out'),
-    //                 DB::raw('COALESCE(prev_stock.initial_stock, 0) 
-    //                         + COALESCE(SUM(CASE WHEN st.`in` > 0 THEN st.`in` ELSE 0 END), 0) 
-    //                         - COALESCE(SUM(CASE WHEN st.`out` > 0 THEN st.`out` ELSE 0 END), 0) 
-    //                         AS final_stock')
-    //             ])
-    //             ->when(!empty($code), function ($query) use ($code) {
-    //                 return $query->where('stock.code', $code);
-    //             })
-    //             ->groupBy([
-    //                 'stock.id', 'stock.item_group', 'stock.brand', 'stock.code', 'stock.items',
-    //                 'stock.description', 'stock.unit', 'stock.have_exp',
-    //                 'prev_stock.initial_stock'
-    //             ]);
-
-    //         // **🔹 Filter Berdasarkan export_type**
-    //         if ($export_type === 'have_stock') {
-    //             $query->havingRaw('
-    //                 COALESCE(prev_stock.initial_stock, 0) > 0 
-    //                 OR COALESCE(SUM(CASE WHEN st.`in` > 0 THEN st.`in` ELSE 0 END), 0) > 0 
-    //                 OR COALESCE(SUM(CASE WHEN st.`out` > 0 THEN st.`out` ELSE 0 END), 0) > 0 
-    //                 OR (COALESCE(prev_stock.initial_stock, 0) 
-    //                     + COALESCE(SUM(CASE WHEN st.`in` > 0 THEN st.`in` ELSE 0 END), 0) 
-    //                     - COALESCE(SUM(CASE WHEN st.`out` > 0 THEN st.`out` ELSE 0 END), 0)) > 0
-    //             ');
-    //         } elseif (isset($item_group)) {
-    //             $query->where('stock.item_group', $item_group);
-    //         } elseif (isset($have_exp)) {
-    //             $query->where('stock.have_exp', $have_exp);
-    //         }
-
-    //         $query->orderBy('stock.items', 'asc');
-
-    //         // **🔹 Gunakan chunk untuk menghindari error memory limit**
-    //         $data['stock'] = collect();
-    //         $query->chunk(500, function ($stocks) use (&$data) {
-    //             $data['stock'] = $data['stock']->merge($stocks);
-    //         });
-            
-    //         return $data['stock'];
-    //     } catch (\Exception $ex) {
-    //         # Insert Log Error
-    //         $requestModule=[];
-    //         $requestModule['reff'] = '-';
-    //         $requestModule['service'] = 'Model';
-    //         $requestModule['class'] = 'Stock';
-    //         $requestModule['function'] = 'getStock';
-    //         $requestModule['message'] = $ex->getMessage();
-    //         $requestModule['note'] = '-';
-    //         $classModel = new LogError();
-    //         $result = $classModel->insertLogError($requestModule);
-    //         # End Log Error
-    //         return [
-    //             'success' => false,
-    //             'message' => $ex->getMessage()
-    //         ];
-    //     }
-    // }
 
     public function insertStock($request)
     {
