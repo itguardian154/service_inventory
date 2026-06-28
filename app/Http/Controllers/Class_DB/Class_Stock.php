@@ -216,6 +216,10 @@ class Class_Stock
             if (isset($request['last_price']) && $request['last_price']!='' ) {$updateData['last_price'] = $request['last_price'];}
             if (isset($request['average_price']) && $request['average_price']!='' ) {$updateData['average_price'] = $request['average_price'];}
             if (isset($request['total_price']) && $request['total_price']!='' ) {$updateData['total_price'] = $request['total_price'];}
+
+            if (isset($request['minimal_stock']) && $request['minimal_stock']!='' ) {$updateData['minimal_stock'] = $request['minimal_stock'];}
+            if (isset($request['moving_type']) && $request['moving_type']!='' ) {$updateData['moving_type'] = $request['moving_type'];}
+            if (isset($request['status']) && $request['status']!='' ) {$updateData['status'] = $request['status'];}
      
             DB::table('stock')
             ->where('id','=',$id)

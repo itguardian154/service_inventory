@@ -315,6 +315,9 @@ class Stock extends Controller
                 'unit'            => 'sometimes|nullable|string',   // Optional, can be null
                 'have_exp'        => 'sometimes|nullable|string',   // Optional, can be null
                 'initial_stock'   => 'sometimes|nullable|string',   // Optional, can be null
+                'minimal_stock'   => 'int',
+                'moving_type'     => '',
+                'status'          => 'int',
                 'reff'            => 'required|string',             // Required
             ]);
 
@@ -328,6 +331,10 @@ class Stock extends Controller
             if (isset($request['unit']) && $request['unit']!='' ) {$requestModule['unit'] = $request['unit'];}
             if (isset($request['initial_stock']) && $request['initial_stock']!='' ) {$requestModule['initial_stock'] = $request['initial_stock'];}
             if (isset($request['have_exp']) && $request['have_exp']!='' ) {$requestModule['have_exp'] = $request['have_exp'];}
+
+            if (isset($request['minimal_stock']) && $request['minimal_stock']!='' ) {$requestModule['minimal_stock'] = $request['minimal_stock'];}
+            if (isset($request['moving_type']) && $request['moving_type']!='' ) {$requestModule['moving_type'] = $request['moving_type'];}
+            if (isset($request['status']) && $request['status']!='' ) {$requestModule['status'] = $request['status'];}
 
             $result=[];
             $classModel = new Class_Stock();
