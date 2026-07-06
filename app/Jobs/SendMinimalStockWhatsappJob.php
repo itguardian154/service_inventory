@@ -23,8 +23,6 @@ class SendMinimalStockWhatsappJob implements ShouldQueue
 
     public function handle(API_Service $notification)
     {
-        // Log::info('JOB MINIMAL STOCK BERJALAN');
-
         $message = "*PERINGATAN MINIMAL STOCK*\n\n";
         $message .= "Item : {$this->stock->items}\n";
         $message .= "Kode : {$this->stock->code}\n";
