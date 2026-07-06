@@ -29,7 +29,7 @@ class Service_Stock extends Controller
         try
         {
             $module = new Stock();
-            $resultModel = $module->getStock($request); 
+            $resultModel = $module->yy($request); 
             
             if($resultModel['success'])
             {
