@@ -40,9 +40,12 @@ class Class_StoreRequest
             {
                 $data_->where('no_transaction',$noTransaction);
             }
-            if($idDepartemen!='')
-            {
-                $data_->where('id_departemen',$idDepartemen);
+            if ($idDepartemen != '') {
+                if ($idDepartemen == 'DP005') {
+                    $data_->whereIn('id_departemen', ['DP005', '-']);
+                } else {
+                    $data_->where('id_departemen', $idDepartemen);
+                }
             }
             if($departemen!='')
             {
