@@ -106,54 +106,6 @@ class API_Service
         }
     }
 
-    // public function sentWhatsapp($request)
-    // {
-    //     $telephone=''; $message='';
-    //     if (isset($request['telephone']) && $request['telephone']!='') {$telephone = $request['telephone'];}
-    //     if (isset($request['message']) && $request['message']!='') {$message = $request['message'];}
-
-    //     try
-    //     {
-    //         $urlServer = config('app.apiWhatsapp');
-    //         $client = new \GuzzleHttp\Client();
-
-    //         $response = $client->request('POST', $urlServer, [
-    //             'headers' => [
-    //                 // 'Authorization' => '+PkfUaYYGfR1+gRCx9no',
-    //                 'Authorization' => '2RhqkkL3Vrp8FkRFcRpi',
-    //                 'Content-Type' => 'application/json',
-    //             ],
-    //             'json' => [
-    //                 'target' => $telephone,
-    //                 'message' => $message
-    //             ],
-    //         ]);
-    //         $data = json_decode($response->getBody(), true);
-    //         if($data['status']==true)
-    //         {
-    //             return [
-    //                 'success' => true,
-    //                 'message' => 'Sent Message successful',
-    //                 'data' => $data['detail']
-    //             ];
-    //         }
-    //         else
-    //         {
-    //             return [
-    //                 'success' => false,
-    //                 'message' => 'failed response API Whatsapp',
-    //                 'data' =>''
-    //             ];
-    //         }
-    //         return $result;
-    //     } catch (\Exception $ex) {
-    //         return [
-    //             'success' => false,
-    //             'message' => $ex->getMessage()
-    //         ];
-    //     }
-    // }
-
     public function sentWhatsapp($request)
     {
         $recipientPhone = $request['recipient_phone'] ?? ($request['telephone'] ?? '');

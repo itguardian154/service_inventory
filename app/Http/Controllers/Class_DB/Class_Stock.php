@@ -8,6 +8,7 @@ use App\Http\Controllers\Log\LogError;
 use App\Models\stock;
 use Carbon\Carbon;
 use DateTime;
+use App\Jobs\SendMinimalStockWhatsappJob;
 
 class Class_Stock
 {
@@ -224,6 +225,44 @@ class Class_Stock
             DB::table('stock')
             ->where('id','=',$id)
             ->update($updateData);
+
+            // Ambil data stock terbaru
+            $stock = DB::table('stock')
+                ->where('id', $id)
+                ->first();
+
+            if ($stock) {
+
+                // Stock sudah dibawah minimal dan belum pernah kirim WA
+                if (
+                    $stock->minimal_stock > 0 &&
+                    $stock->final_stock <= $stock->minimal_stock &&
+                    $stock->is_notified == 0
+                ) {
+
+                    SendMinimalStockWhatsappJob::dispatch($stock);
+
+                    DB::table('stock')
+                        ->where('id', $id)
+                        ->update([
+                            'is_notified' => 1
+                        ]);
+                }
+
+                // Stock kembali normal, reset flag
+                if (
+                    $stock->final_stock > $stock->minimal_stock &&
+                    $stock->is_notified == 1
+                ) {
+
+                    DB::table('stock')
+                        ->where('id', $id)
+                        ->update([
+                            'is_notified' => 0
+                        ]);
+                }
+            }
+
    
             return [
                 'success' => true,
