@@ -238,7 +238,8 @@ class Class_Stock
                     $stock->minimal_stock > 0 &&
                     $stock->final_stock <= $stock->minimal_stock &&
                     $stock->is_notified == 0 && 
-                    $stock->status == 1
+                    $stock->status == 1 && 
+                    $stock->moving_type=='FAST'
                 ) {
 
                     // SendMinimalStockWhatsappJob::dispatch($stock);
@@ -248,14 +249,6 @@ class Class_Stock
                         ->where('id', $id)
                         ->update([
                             'is_notified' => 1
-                        ]);
-                }
-                else
-                {
-                     DB::table('stock')
-                        ->where('id', $id)
-                        ->update([
-                            'is_notified' => 2
                         ]);
                 }
 

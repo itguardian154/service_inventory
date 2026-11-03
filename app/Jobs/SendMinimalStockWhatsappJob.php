@@ -47,15 +47,26 @@ class SendMinimalStockWhatsappJob implements ShouldQueue
                 return;
             }
 
-            $message = "*PERINGATAN MINIMAL STOCK*\n\n";
+            // $message = "*PERINGATAN MINIMAL STOCK*\n\n";
+            // $message .= "Item : {$stock->items}\n";
+            // $message .= "Kode : {$stock->code}\n";
+            // $message .= "Stock Saat Ini : {$stock->final_stock}\n";
+            // $message .= "Minimal Stock : {$stock->minimal_stock}\n\n";
+            // $message .= "Mohon segera lakukan pembelian atau transfer stock.";
+
+            $message = "*MINIMAL STOCK*\n\n";
+            $message .= "Dear Bapak/Ibu PIC Warehouse,\n\n";
+            $message .= "Stock item telah mencapai atau berada di bawah batas minimal dengan data sebagai berikut:\n\n";
             $message .= "Item : {$stock->items}\n";
-            $message .= "Kode : {$stock->code}\n";
-            $message .= "Stock Saat Ini : {$stock->final_stock}\n";
-            $message .= "Minimal Stock : {$stock->minimal_stock}\n\n";
-            $message .= "Mohon segera lakukan pembelian atau transfer stock.";
+            $message .= "Kode Item : {$stock->code}\n";
+            $message .= "Stock Saat Ini : {$stock->final_stock} {$stock->unit}\n";
+            $message .= "Minimal Stock : {$stock->minimal_stock} {$stock->unit}\n\n";
+            $message .= "Mohon untuk dapat melakukan pengecekan dan segera melakukan pembelian stock apabila diperlukan.\n\n";
+            $message .= "Matur Nuwun.\n\n";
+            $message .= "[sent by Bot Loka]";
 
             $payload = [
-                'recipient_phone' => '085941304991',
+                'recipient_phone' => '081230907899',
                 'recipient_name'  => 'Warehouse',
                 'title'           => 'Minimal Stock',
                 'message'         => $message,
